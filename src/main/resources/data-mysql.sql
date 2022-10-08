@@ -1,0 +1,1 @@
+INSERT INTO user (email, password, enabled) values ('oksana@moi.meme', 'pass', 1);

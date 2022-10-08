@@ -1,0 +1,47 @@
+@charset "UTF-8";
+body {
+  display: flex;
+  justify-content: center;
+  margin: 2%
+}
+#conteneur-form {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid grey;
+  border-radius: 5px;
+  width: 400px;
+  padding: 3%;
+  margin-top: 5%;
+}
+
+#form-auth {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items:center;
+}
+
+#logo-paymybuddy {
+  background-color: green;	
+  color: white;
+  font-weight: 400;
+  border: 1px solid grey;
+  border-radius: 5px;
+  text-align: center;
+  padding: 3%;
+}
+
+#submit {
+  color: white;
+  border: 1px solid grey;
+  border-radius: 5px;
+  text-align: center;
+  margin-top: 10%;
+}
+
+.form {
+  border: 1px solid grey;
+  border-radius: 5px;
+  text-align: center;
+  margin: 5%;
+}
