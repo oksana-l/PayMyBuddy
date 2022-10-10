@@ -1,29 +1,41 @@
 package com.PayMyBuddy.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-import com.PayMyBuddy.model.User;
-import com.PayMyBuddy.repository.UserRepository;
+import com.PayMyBuddy.service.UserService;
+import com.PayMyBuddy.web.dto.UserDTO;
 
 @Controller
+@RequestMapping("/registration")
 @SessionAttributes("user")
 public class UserController {
 
-	@Autowired
-	private UserRepository userRepository;
-	
-	@RequestMapping(value="/registration.html")
-	public String login(@RequestParam(name="email", required=false)
-							String email, String password, Model model) {
-		model.addAttribute("email", model.getAttribute("email"));
-		model.addAttribute("password", model.getAttribute("password"));
-		User user = new User(email, password, 0);
-		userRepository.save(user);
-		return "registration+j";
+	private UserService userService;
+
+	public UserController(UserService userService) {
+		super();
+		this.userService = userService;
 	}
+
+	@ModelAttribute("user")
+    public UserDTO userDto() {
+        return new UserDTO();
+    }
+	
+	@GetMapping
+	public String showRegistrationForm() {
+		return "registration";
+	}
+	
+	@PostMapping
+	public String registerUserAccount(@ModelAttribute("user") UserDTO userDto) {
+		userService.save(userDto);
+		return "redirect:/registration?success";
+	}
+	
 }
