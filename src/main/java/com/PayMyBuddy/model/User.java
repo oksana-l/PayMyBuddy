@@ -1,57 +1,72 @@
-  package com.PayMyBuddy.model;
+package com.PayMyBuddy.model;
 
-import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 @Entity
-@Table(name = "user", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
+@Table(name = "user")
 public class User {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)	
 	private Long id;
 	
-    @NotNull(message = "Email may not be null")
-    @NotEmpty(message = "Email may not be null")
+    @NotBlank(message = "Name may not be null")
+    @Column(unique=true)
+	private String userName;
+    
+    @NotBlank(message = "Email may not be null")
+    @Column(unique=true)
 	private String email;
 	
-    @NotNull(message = "Password may not be null")
-    @NotEmpty(message = "Password may not be empty")
+    @NotBlank(message = "Password may not be null")
 	private String password;
 	
 	private float balance;
 	
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Collection <Connection> connections;
+	@ManyToMany
+	@JoinTable(name = "user_connection",
+	   joinColumns = @JoinColumn(name = "id"), 	
+	   inverseJoinColumns = {
+			   @JoinColumn(name = "user_id"),
+			   @JoinColumn(name = "connected_user_id")
+	   })
+	private Set<Connection> connections;
 	
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Collection <Transaction> transactions;
+	@OneToMany(mappedBy = "sender")
+	private List<Transaction> debits;
+	
+	@OneToMany(mappedBy = "recepient")
+	private List<Transaction> credits;
 	
 	public User() {
 		
 	}
 
-	public User(
-			@NotNull(message = "Email may not be null") @NotEmpty(message = "Email may not be null") String email,
-			@NotNull(message = "Password may not be null") @NotEmpty(message = "Password may not be empty") String password,
-			float balance, Collection<Connection> connections) {
+	public User(@NotBlank(message = "Name may not be null") String userName,
+			@NotBlank(message = "Email may not be null") String email,
+			@NotBlank(message = "Password may not be null") String password, float balance,
+			Set<Connection> connections, List<Transaction> debits, List<Transaction> credits) {
 		super();
+		this.userName = userName;
 		this.email = email;
 		this.password = password;
 		this.balance = balance;
 		this.connections = connections;
+		this.debits = debits;
+		this.credits = credits;
 	}
 
 	public Long getId() {
@@ -60,6 +75,14 @@ public class User {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 	public String getEmail() {
@@ -86,40 +109,29 @@ public class User {
 		this.balance = balance;
 	}
 
-	public Collection<Connection> getConnections() {
+	public Set<Connection> getConnections() {
 		return connections;
 	}
 
-	public void setConnections(Collection<Connection> connections) {
+	public void setConnections(Set<Connection> connections) {
 		this.connections = connections;
 	}
 
-	public void addConnection(Connection connection) {
-		connections.add(connection);
-		connection.setUser(this);
-	}
-	
-	public void removeConnection(Connection connection) {
-		connections.remove(connection);
-		connection.setUser(null);
+	public List<Transaction> getDebits() {
+		return debits;
 	}
 
-	public Collection<Transaction> getTransaction() {
-		return transactions;
+	public void setDebits(List<Transaction> debits) {
+		this.debits = debits;
 	}
 
-	public void setTransaction(Collection<Transaction> transactions) {
-		this.transactions = transactions;
+	public List<Transaction> getCredits() {
+		return credits;
 	}
-	
-	public void addTransaction(Transaction transaction) {
-		transactions.add(transaction);
-		transaction.setUser(this);
+
+	public void setCredits(List<Transaction> credits) {
+		this.credits = credits;
 	}
-	
-	public void removeTransaction(Transaction transaction) {
-		transactions.remove(transaction);
-		transaction.setUser(null);
-	}
+
 
 }

@@ -1,7 +1,5 @@
 package com.PayMyBuddy.model;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -15,33 +13,31 @@ import javax.persistence.Table;
 public class Transaction {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)	
 	private Long id;
  
-	@Column(name = "sender_id")
-	private Long senderId;
+	@ManyToOne
+	@JoinColumn(name = "sender_id")
+	private User sender;
 	
-	@Column(name = "recipient_id")
-	private Long recepientId;
+	@ManyToOne
+	@JoinColumn(name = "recipient_id")
+	private User recepient;
 	
 	private String date;
 	
 	private String description;
 	
 	private float amount;
-	
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "user")
-	private User user;
 
 	public Transaction() {
 		
 	}
 
-	public Transaction(Long senderId, Long recepientId, String date, String description, float amount) {
+	public Transaction(User sender, User recepient, String date, String description, float amount) {
 		super();
-		this.senderId = senderId;
-		this.recepientId = recepientId;
+		this.sender = sender;
+		this.recepient = recepient;
 		this.date = date;
 		this.description = description;
 		this.amount = amount;
@@ -55,20 +51,20 @@ public class Transaction {
 		this.id = id;
 	}
 
-	public Long getSenderId() {
-		return senderId;
+	public User getSender() {
+		return sender;
 	}
 
-	public void setSenderId(Long senderId) {
-		this.senderId = senderId;
+	public void setSender(User sender) {
+		this.sender = sender;
 	}
 
-	public Long getRecepientId() {
-		return recepientId;
+	public User getRecepient() {
+		return recepient;
 	}
 
-	public void setRecepientId(Long recepientId) {
-		this.recepientId = recepientId;
+	public void setRecepient(User recepient) {
+		this.recepient = recepient;
 	}
 
 	public String getDate() {
@@ -94,12 +90,5 @@ public class Transaction {
 	public void setAmount(float amount) {
 		this.amount = amount;
 	}
-	
-	public User getUser() {
-		return user;
-	}
 
-	public void setUser(User user) {
-		this.user = user;
-	}
 }

@@ -1,8 +1,6 @@
 package com.PayMyBuddy.service;
 
-import org.springframework.stereotype.Service;
+public interface TransactionService {
 
-@Service
-public class TransactionService {
 
 }
