@@ -50,7 +50,7 @@ public class UserController {
 		    }
 			e.printStackTrace();
 		}
-		return "redirect:/user";
+		return "redirect:/login";
 	}
 	
 }

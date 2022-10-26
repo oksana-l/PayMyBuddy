@@ -1,5 +1,7 @@
 package com.PayMyBuddy.model;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,13 +30,13 @@ public class Transaction {
 	
 	private String description;
 	
-	private float amount;
+	private BigDecimal amount;
 
 	public Transaction() {
 		
 	}
 
-	public Transaction(User sender, User recepient, String date, String description, float amount) {
+	public Transaction(User sender, User recepient, String date, String description, BigDecimal amount) {
 		super();
 		this.sender = sender;
 		this.recepient = recepient;
@@ -83,11 +85,11 @@ public class Transaction {
 		this.description = description;
 	}
 
-	public float getAmount() {
+	public BigDecimal getAmount() {
 		return amount;
 	}
 
-	public void setAmount(float amount) {
+	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
 

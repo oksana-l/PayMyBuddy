@@ -12,7 +12,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.PayMyBuddy.service.UserService;
 
@@ -48,10 +47,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 			.antMatchers(
 				 "/registration",
 				 "/login",
-				 "/transfer",
 	                "/js/**",
-	                "/css/**",
-	                "/img/**").permitAll()
+	                "/css/**").permitAll()
 	   		.anyRequest()
 	   		.authenticated()
 	   		.and()
@@ -62,8 +59,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 	   		.logout()
 			.invalidateHttpSession(true)
 			.clearAuthentication(true)
-			.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-	   		.logoutSuccessUrl("/home");
+	   		.logoutSuccessUrl("/login");
 	}
 
 }

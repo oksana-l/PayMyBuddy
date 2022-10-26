@@ -1,5 +1,7 @@
 package com.PayMyBuddy.model;
 
+import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -34,16 +36,15 @@ public class User {
     @NotBlank(message = "Password may not be null")
 	private String password;
 	
-	private float balance;
+	private BigDecimal balance;
 	
 	@ManyToMany
-	@JoinTable(name = "user_connection",
-	   joinColumns = @JoinColumn(name = "id"), 	
+	@JoinTable(name = "connection",
+	   joinColumns = @JoinColumn(name = "user_id"), 	
 	   inverseJoinColumns = {
-			   @JoinColumn(name = "user_id"),
 			   @JoinColumn(name = "connected_user_id")
 	   })
-	private Set<Connection> connections;
+	private Set<User> connections;
 	
 	@OneToMany(mappedBy = "sender")
 	private List<Transaction> debits;
@@ -57,8 +58,8 @@ public class User {
 
 	public User(@NotBlank(message = "Name may not be null") String userName,
 			@NotBlank(message = "Email may not be null") String email,
-			@NotBlank(message = "Password may not be null") String password, float balance,
-			Set<Connection> connections, List<Transaction> debits, List<Transaction> credits) {
+			@NotBlank(message = "Password may not be null") String password, BigDecimal balance,
+			Set<User> connections, List<Transaction> debits, List<Transaction> credits) {
 		super();
 		this.userName = userName;
 		this.email = email;
@@ -101,19 +102,22 @@ public class User {
 		this.password = password;
 	}
 
-	public float getBalance() {
+	public BigDecimal getBalance() {
 		return balance;
 	}
 
-	public void setBalance(float balance) {
+	public void setBalance(BigDecimal balance) {
 		this.balance = balance;
 	}
 
-	public Set<Connection> getConnections() {
+	public Set<User> getConnections() {
+		if (connections==null) {
+			connections = new HashSet<>();
+		}
 		return connections;
 	}
 
-	public void setConnections(Set<Connection> connections) {
+	public void setConnections(Set<User> connections) {
 		this.connections = connections;
 	}
 
@@ -132,6 +136,5 @@ public class User {
 	public void setCredits(List<Transaction> credits) {
 		this.credits = credits;
 	}
-
-
+	
 }

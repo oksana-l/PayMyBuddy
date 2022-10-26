@@ -1,11 +1,10 @@
---DROP TABLE IF EXISTS transaction;
 CREATE TABLE IF NOT EXISTS transaction (
   id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
   sender_id INT NOT NULL,
   recipient_id INT NOT NULL,
   date DATE,
   description VARCHAR(255),
-  amount FLOAT(20),
+  amount DECIMAL(10,2),
   FOREIGN KEY (sender_id) REFERENCES user(id),
   FOREIGN KEY (recipient_id) REFERENCES user(id)
 );

@@ -1,5 +1,7 @@
 package com.PayMyBuddy.web.dto;
 
+import java.math.BigDecimal;
+
 import com.PayMyBuddy.model.Transaction;
 
 public class TransactionDTO {
@@ -7,7 +9,7 @@ public class TransactionDTO {
 	private String connectedUserName;
 	private String date;
 	private String description;
-	private float amount;
+	private BigDecimal amount;
 	
 	public TransactionDTO() {
 
@@ -44,11 +46,11 @@ public class TransactionDTO {
 		this.description = description;
 	}
 
-	public float getAmount() {
+	public BigDecimal getAmount() {
 		return amount;
 	}
 
-	public void setAmount(float amount) {
+	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
 	

@@ -36,17 +36,17 @@ public class UserServiceImpl implements UserService {
 	          userDto.getEmail());
 	    }
 		User user = new User(userDto.getUserName(), userDto.getEmail(),
-				(userDto.getPassword()), 0, new LinkedHashSet<>(), 
+				(userDto.getPassword()), null, new LinkedHashSet<>(), 
 				Arrays.asList(new Transaction()), Arrays.asList(new Transaction()));
 		
 		return userRepository.save(user);
 	}
 
 	@Override
-	public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        User user = userRepository.findByUserName(userName);
+	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email);
         if (user == null) {
-            throw new UsernameNotFoundException("No user found with username: " + userName);
+            throw new UsernameNotFoundException("No user found with email: " + email);
         }
         boolean enabled = true;
         boolean accountNonExpired = true;
@@ -77,4 +77,20 @@ public class UserServiceImpl implements UserService {
     public Optional<User> findUserById(Long id) {
     	return userRepository.findById(id);
     }
+
+	@Override
+	public UserDetails loadUserByEmail(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new UsernameNotFoundException("No user found");
+        }
+        boolean enabled = true;
+        boolean accountNonExpired = true;
+        boolean credentialsNonExpired = true;
+        boolean accountNonLocked = true;
+        
+        return new org.springframework.security.core.userdetails.User(
+          user.getEmail(), user.getPassword(), enabled, accountNonExpired,
+          credentialsNonExpired, accountNonLocked, getAuthorities(new ArrayList<String>()));
+	}
 }
