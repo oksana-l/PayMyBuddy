@@ -46,10 +46,10 @@ public class User {
 	   })
 	private Set<User> connections;
 	
-	@OneToMany(mappedBy = "sender")
+	@OneToMany(targetEntity = Transaction.class, mappedBy = "sender")
 	private List<Transaction> debits;
 	
-	@OneToMany(mappedBy = "recepient")
+	@OneToMany(targetEntity = Transaction.class, mappedBy = "recepient")
 	private List<Transaction> credits;
 	
 	public User() {
@@ -72,10 +72,6 @@ public class User {
 
 	public Long getId() {
 		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public String getUserName() {
@@ -137,4 +133,14 @@ public class User {
 		this.credits = credits;
 	}
 	
-}
+	public void addSender(Transaction t) {
+		t.setSender(this);
+		debits.add(t);
+	}
+	
+	public void addRecepient(Transaction t) {
+		t.setRecepient(this);
+		credits.add(t);
+	}
+	
+ }

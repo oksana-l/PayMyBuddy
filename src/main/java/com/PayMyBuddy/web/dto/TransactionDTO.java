@@ -3,9 +3,11 @@ package com.PayMyBuddy.web.dto;
 import java.math.BigDecimal;
 
 import com.PayMyBuddy.model.Transaction;
+import com.PayMyBuddy.repository.UserRepository;
 
 public class TransactionDTO {
 	
+	private Long userId;
 	private String connectedUserName;
 	private String date;
 	private String description;
@@ -15,11 +17,20 @@ public class TransactionDTO {
 
 	}
 	
-	public TransactionDTO(Transaction transaction) {
-		this.connectedUserName = transaction.getRecepient().getUserName();
-		this.description = transaction.getDescription();
+	public TransactionDTO(Transaction transaction, UserRepository userRepository, String description) {
+		this.userId = transaction.getId();
+		this.connectedUserName = userRepository.findById(transaction.getId()).get().getUserName();
+		this.description = description;
 		this.date = transaction.getDate();
 		this.amount = transaction.getAmount();
+	}
+
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 
 	public String getConnectedUserName() {

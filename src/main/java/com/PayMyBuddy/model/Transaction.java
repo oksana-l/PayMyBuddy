@@ -17,19 +17,17 @@ public class Transaction {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)	
 	private Long id;
- 
-	@ManyToOne
-	@JoinColumn(name = "sender_id")
-	private User sender;
 	
 	@ManyToOne
-	@JoinColumn(name = "recipient_id")
+	@JoinColumn(name = "senderId", insertable = false, updatable = false)
+	private User sender;
+
+	@ManyToOne
+	@JoinColumn(name = "recepientId", insertable = false, updatable = false)
 	private User recepient;
 	
 	private String date;
-	
 	private String description;
-	
 	private BigDecimal amount;
 
 	public Transaction() {
@@ -43,6 +41,14 @@ public class Transaction {
 		this.date = date;
 		this.description = description;
 		this.amount = amount;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public Long getId() {
@@ -75,14 +81,6 @@ public class Transaction {
 
 	public void setDate(String date) {
 		this.date = date;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
 	}
 
 	public BigDecimal getAmount() {
