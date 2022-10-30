@@ -25,13 +25,13 @@
 						formaction="myConnections">Add connection</button>
 				</form>
 			</div>
-			<form action="#" class="form-select">
+			<form action="#" class="form-select" method="post" th:object="${transaction}">
 				<select class="form-control select" id="dropDownList">
 					<option value="0">Select A Connection</option>
 					<option th:each="connection : ${connections}"
-						th:value="${connection}" th:text="${connection.userName}"></option>
-				</select> <input class="quantity" id="id_form-0-quantity" min="0"
-					name="form-0-quantity" value="1" type="number" step="0,01" required>
+						th:value="${connection.id}" th:text="${connection.userName}"></option>
+				</select> 
+				<input class="quantity" min="0" value="1" type="number" step="0,01" th:field="*{amount}" required>
 				<button type="submit" class="btn btn-success">Pay</button>
 			</form>
 		</div>

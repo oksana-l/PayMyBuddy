@@ -1,7 +1,6 @@
 package com.PayMyBuddy.controller;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -41,13 +40,12 @@ public class TransferController {
 	}
 
 	@PostMapping
+	@Transactional
 	public String saveTransaction(@ModelAttribute("transaction") TransactionDTO form, 
 			Authentication auth, Model model) {
 		User user = userService.findUserByEmail(auth.getName());
-		form.setUserId(user.getId());
-		form.setDescription("Debit");
-		form.setDate(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 	    Transaction transaction = transactionService.save(auth, form);
+		model.addAttribute("transaction", new TransactionDTO());
 		model.addAttribute("connections", user.getConnections());
 	    model.addAttribute("transactions", 
 	    		transactionService.findTransactionsBySenderId(transaction.getSender().getId()));

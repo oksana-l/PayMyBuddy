@@ -17,6 +17,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
+import com.PayMyBuddy.web.dto.UserDTO;
+
 @Entity
 @Table(name = "user")
 public class User {
@@ -46,10 +48,12 @@ public class User {
 	   })
 	private Set<User> connections;
 	
-	@OneToMany(targetEntity = Transaction.class, mappedBy = "sender")
+	@OneToMany
+	@JoinColumn(name = "sender_id")
 	private List<Transaction> debits;
 	
-	@OneToMany(targetEntity = Transaction.class, mappedBy = "recepient")
+	@OneToMany
+	@JoinColumn(name = "recepient_id")
 	private List<Transaction> credits;
 	
 	public User() {
@@ -133,14 +137,27 @@ public class User {
 		this.credits = credits;
 	}
 	
-	public void addSender(Transaction t) {
+	public void addDebit(Transaction t) {
 		t.setSender(this);
 		debits.add(t);
 	}
 	
-	public void addRecepient(Transaction t) {
+	public void addCredit(Transaction t) {
 		t.setRecepient(this);
 		credits.add(t);
 	}
 	
+    public void removeDebit(Transaction t){
+        debits.remove(t);
+    }
+	
+    public void removeCredit(Transaction t){
+        credits.remove(t);
+    }
+    
+    public static User from(UserDTO userDto){
+    	User user = new User();
+    	user.setUserName(userDto.getUserName());
+        return user;
+    }
  }

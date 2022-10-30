@@ -3,12 +3,14 @@ package com.PayMyBuddy.model;
 import java.math.BigDecimal;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.PayMyBuddy.web.dto.TransactionDTO;
 
 @Entity
 @Table(name = "transaction")
@@ -18,12 +20,10 @@ public class Transaction {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)	
 	private Long id;
 	
-	@ManyToOne
-	@JoinColumn(name = "senderId", insertable = false, updatable = false)
+	@ManyToOne(fetch = FetchType.LAZY)
 	private User sender;
 
-	@ManyToOne
-	@JoinColumn(name = "recepientId", insertable = false, updatable = false)
+	@ManyToOne(fetch = FetchType.LAZY)
 	private User recepient;
 	
 	private String date;
@@ -91,4 +91,9 @@ public class Transaction {
 		this.amount = amount;
 	}
 
+    public static Transaction from(TransactionDTO transactionDto){
+    	Transaction transaction = new Transaction();
+    	transaction.setId(transactionDto.getUserId());
+        return transaction;
+    }
 }

@@ -1,5 +1,7 @@
 package com.PayMyBuddy.service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.security.core.Authentication;
@@ -29,7 +31,8 @@ public class TransactionServiceImpl implements TransactionService{
 		User recepient = userRepository.findByUserName(form.getConnectedUserName());
 		Transaction transaction = new Transaction();
 		transaction.setSender(sender);
-		transaction.setDate(form.getDate());
+		transaction.setDate(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+		transaction.setDescription("Debit");
 		transaction.setAmount(form.getAmount());
 		transaction.setRecepient(recepient);
 		return transactionRepository.save(transaction);
