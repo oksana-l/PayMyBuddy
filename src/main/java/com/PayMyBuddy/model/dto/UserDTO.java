@@ -1,27 +1,23 @@
-package com.PayMyBuddy.web.dto;
+package com.PayMyBuddy.model.dto;
 
-import javax.validation.constraints.NotBlank;
+import com.PayMyBuddy.model.User;
 
 public class UserDTO {
 	
-	@NotBlank
 	private String userName;
 	
-	@NotBlank
 	private String email;
 	
-	@NotBlank
 	private String password;
 	
 	public UserDTO() {
 	
 	}
 
-	public UserDTO(String userName, String email, String password) {
-		super();
-		this.userName = userName;
-		this.email = email;
-		this.password = password;
+	public UserDTO(User user) {
+		this.userName = user.getUserName();
+		this.email = user.getEmail();
+		this.password = user.getPassword();
 	}
 
 	public String getUserName() {
@@ -47,5 +43,4 @@ public class UserDTO {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
 }

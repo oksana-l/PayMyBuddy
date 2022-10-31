@@ -1,4 +1,4 @@
-package com.PayMyBuddy.web.dto;
+package com.PayMyBuddy.model.dto;
 
 public class AddConnectionDTO {
 	

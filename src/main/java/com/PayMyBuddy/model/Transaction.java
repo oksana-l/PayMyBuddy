@@ -7,10 +7,11 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.PayMyBuddy.web.dto.TransactionDTO;
+import com.PayMyBuddy.model.dto.TransactionDTO;
 
 @Entity
 @Table(name = "transaction")
@@ -21,9 +22,11 @@ public class Transaction {
 	private Long id;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "sender_id")
 	private User sender;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "recepient_id")
 	private User recepient;
 	
 	private String date;
@@ -93,7 +96,11 @@ public class Transaction {
 
     public static Transaction from(TransactionDTO transactionDto){
     	Transaction transaction = new Transaction();
-    	transaction.setId(transactionDto.getUserId());
+    	transaction.setSender(transactionDto.getSender());
+    	transaction.setRecepient(transactionDto.getRecepient());
+    	transaction.setDate(transactionDto.getDate());
+    	transaction.setDescription(transactionDto.getDescription());
+    	transaction.setAmount(transactionDto.getAmount());
         return transaction;
     }
 }

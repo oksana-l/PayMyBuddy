@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.PayMyBuddy.model.User;
+import com.PayMyBuddy.model.dto.AddConnectionDTO;
 import com.PayMyBuddy.service.ConnectionServiceImpl;
 import com.PayMyBuddy.service.UserServiceImpl;
-import com.PayMyBuddy.web.dto.AddConnectionDTO;
 
 @Controller
 @RequestMapping("/myConnections")

@@ -26,12 +26,12 @@
 				</form>
 			</div>
 			<form action="#" class="form-select" method="post" th:object="${transaction}">
-				<select class="form-control select" id="dropDownList">
+				<select class="form-control select" id="dropDownList" th:field="*{recepient.userName}">
 					<option value="0">Select A Connection</option>
 					<option th:each="connection : ${connections}"
-						th:value="${connection.id}" th:text="${connection.userName}"></option>
+						th:value="${connection.userName}" th:text="${connection.userName}"></option>
 				</select> 
-				<input class="quantity" min="0" value="1" type="number" step="0,01" th:field="*{amount}" required>
+				<input class="quantity" min="0" value="1" type="number" step=".01" th:field="*{amount}" required>
 				<button type="submit" class="btn btn-success">Pay</button>
 			</form>
 		</div>

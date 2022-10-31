@@ -11,11 +11,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.PayMyBuddy.model.Transaction;
 import com.PayMyBuddy.model.User;
+import com.PayMyBuddy.model.dto.TransactionDTO;
 import com.PayMyBuddy.service.TransactionServiceImpl;
 import com.PayMyBuddy.service.UserServiceImpl;
-import com.PayMyBuddy.web.dto.TransactionDTO;
 
 @Controller
 @RequestMapping("/transfer")
@@ -31,7 +30,7 @@ public class TransferController {
 	public String showTransfer(Authentication auth, Model model) {
 		User user = userService.findUserByEmail(auth.getName());
 		TransactionDTO transaction = new TransactionDTO();
-		transaction.setUserId(user.getId());
+		transaction.setSender(user);
 		model.addAttribute("transaction", new TransactionDTO());
 		model.addAttribute("connections", user.getConnections());
 		model.addAttribute("transactions", 
@@ -44,11 +43,12 @@ public class TransferController {
 	public String saveTransaction(@ModelAttribute("transaction") TransactionDTO form, 
 			Authentication auth, Model model) {
 		User user = userService.findUserByEmail(auth.getName());
-	    Transaction transaction = transactionService.save(auth, form);
+		form.setSender(user);
+	    transactionService.save(auth, form);
 		model.addAttribute("transaction", new TransactionDTO());
 		model.addAttribute("connections", user.getConnections());
 	    model.addAttribute("transactions", 
-	    		transactionService.findTransactionsBySenderId(transaction.getSender().getId()));
+	    		transactionService.findTransactionsBySenderId(user.getId()));
 	    return "transfer";
 	}
 }

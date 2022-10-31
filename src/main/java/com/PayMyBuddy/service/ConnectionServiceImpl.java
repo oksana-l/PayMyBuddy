@@ -4,8 +4,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.PayMyBuddy.model.User;
+import com.PayMyBuddy.model.dto.AddConnectionDTO;
 import com.PayMyBuddy.repository.UserRepository;
-import com.PayMyBuddy.web.dto.AddConnectionDTO;
 
 @Service
 public class ConnectionServiceImpl implements ConnectionService{

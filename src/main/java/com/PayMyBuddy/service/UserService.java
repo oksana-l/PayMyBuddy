@@ -5,8 +5,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.PayMyBuddy.model.User;
-import com.PayMyBuddy.web.dto.UserDTO;
-import com.PayMyBuddy.web.dto.UserExistsException;
+import com.PayMyBuddy.model.dto.UserDTO;
+import com.PayMyBuddy.model.exception.UserExistsException;
 
 public interface UserService extends UserDetailsService{
 	User save(UserDTO registrationDto) throws UserExistsException;

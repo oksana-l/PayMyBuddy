@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Optional;
 
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,18 +16,102 @@ import org.springframework.stereotype.Service;
 
 import com.PayMyBuddy.model.Transaction;
 import com.PayMyBuddy.model.User;
+import com.PayMyBuddy.model.dto.UserDTO;
+import com.PayMyBuddy.model.exception.UserExistsException;
+import com.PayMyBuddy.model.exception.UserNotFoundException;
 import com.PayMyBuddy.repository.UserRepository;
-import com.PayMyBuddy.web.dto.UserDTO;
-import com.PayMyBuddy.web.dto.UserExistsException;
 
 @Service
 public class UserServiceImpl implements UserService {
 
 	private UserRepository userRepository;
+	private TransactionServiceImpl transactionService;
 		
-	public UserServiceImpl(UserRepository userRepository) {
+	@Autowired
+	public UserServiceImpl(UserRepository userRepository, TransactionServiceImpl transactionService) {
 		super();
 		this.userRepository = userRepository;
+		this.transactionService = transactionService;
+	}
+	
+	public User addUser(User user) {
+		return userRepository.save(user);
+	}
+	
+	public List<User> getUsers() {
+		return userRepository.findAll();
+	}
+	
+	public User getUser(Long id) {
+		return userRepository.findById(id).orElseThrow(() -> 
+			new UserNotFoundException(id));
+	}
+	
+	public User findUserByUserName(String userName) {
+        User user = userRepository.findByUserName(userName);
+        if (user == null) {
+            throw new UsernameNotFoundException("No user found with userName: " + userName);
+        }        
+        return user;
+    }
+	
+	public User findUserByEmail(String email) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new UsernameNotFoundException("No user found with email: " + email);
+        }        
+        return user;
+    }
+	
+	public User deleteUser(Long id) {
+		User user = getUser(id);
+		userRepository.delete(user);
+		return user ;
+	}
+	
+	@Transactional
+	public User updateUser(Long id, User user) {
+		User userToUpdate = getUser(id);
+		userToUpdate.setUserName(user.getUserName());
+		userToUpdate.setEmail(user.getEmail());
+		userToUpdate.setPassword(user.getPassword());
+		userToUpdate.setBalance(user.getBalance());
+		userToUpdate.setConnections(user.getConnections());
+		userToUpdate.setDebits(user.getDebits());
+		userToUpdate.setCredits(user.getCredits());
+		return userToUpdate;
+	}
+	
+	@Transactional
+	public User addDebitToUser(Long userId, Long transactionId) {
+		User user = getUser(userId);
+		Transaction transaction= transactionService.getTransaction(transactionId);
+		user.addDebit(transaction);
+		return user;
+	}
+	
+	@Transactional
+	public User removeDebitToUser(Long userId, Long transactionId) {
+		User user = getUser(userId);
+		Transaction transaction= transactionService.getTransaction(transactionId);
+		user.removeDebit(transaction);
+		return user;
+	}
+	
+	@Transactional
+	public User addCreditToUser(Long userId, Long transactionId) {
+		User user = getUser(userId);
+		Transaction transaction= transactionService.getTransaction(transactionId);
+		user.addCredit(transaction);
+		return user;
+	}
+	
+	@Transactional
+	public User removeCreditToUser(Long userId, Long transactionId) {
+		User user = getUser(userId);
+		Transaction transaction= transactionService.getTransaction(transactionId);
+		user.removeCredit(transaction);
+		return user;
 	}
 	
 	@Override
@@ -57,26 +143,6 @@ public class UserServiceImpl implements UserService {
           user.getEmail(), user.getPassword(), enabled, accountNonExpired,
           credentialsNonExpired, accountNonLocked, getAuthorities(new ArrayList<String>()));
 	}
-	
-	public User findUserByEmail(String email) {
-        User user = userRepository.findByEmail(email);
-        if (user == null) {
-            throw new UsernameNotFoundException("No user found with email: " + email);
-        }        
-        return user;
-    }
-    
-    private static List<GrantedAuthority> getAuthorities (List<String> roles) {
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        for (String role : roles) {
-            authorities.add(new SimpleGrantedAuthority(role));
-        }
-        return authorities;
-    }
-
-    public Optional<User> findUserById(Long id) {
-    	return userRepository.findById(id);
-    }
 
 	@Override
 	public UserDetails loadUserByEmail(String email) throws UsernameNotFoundException {
@@ -93,4 +159,12 @@ public class UserServiceImpl implements UserService {
           user.getEmail(), user.getPassword(), enabled, accountNonExpired,
           credentialsNonExpired, accountNonLocked, getAuthorities(new ArrayList<String>()));
 	}
+	
+    private static List<GrantedAuthority> getAuthorities (List<String> roles) {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        for (String role : roles) {
+            authorities.add(new SimpleGrantedAuthority(role));
+        }
+        return authorities;
+    }
 }

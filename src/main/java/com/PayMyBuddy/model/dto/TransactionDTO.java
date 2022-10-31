@@ -1,14 +1,14 @@
-package com.PayMyBuddy.web.dto;
+package com.PayMyBuddy.model.dto;
 
 import java.math.BigDecimal;
 
 import com.PayMyBuddy.model.Transaction;
-import com.PayMyBuddy.repository.UserRepository;
+import com.PayMyBuddy.model.User;
 
 public class TransactionDTO {
 	
-	private Long userId;
-	private String connectedUserName;
+	private User sender;
+	private User recepient;
 	private String date;
 	private String description;
 	private BigDecimal amount;
@@ -17,28 +17,28 @@ public class TransactionDTO {
 
 	}
 	
-	public TransactionDTO(Transaction transaction, UserRepository userRepository, String description) {
-		this.userId = transaction.getId();
-		this.connectedUserName = userRepository.findById(transaction.getId()).get().getUserName();
+	public TransactionDTO(Transaction transaction, String description) {
+		this.sender = transaction.getRecepient();
+		this.recepient = transaction.getRecepient();
 		this.description = description;
 		this.date = transaction.getDate();
 		this.amount = transaction.getAmount();
 	}
 
-	public Long getUserId() {
-		return userId;
+	public User getSender() {
+		return sender;
 	}
 
-	public void setUserId(Long userId) {
-		this.userId = userId;
+	public void setSender(User sender) {
+		this.sender = sender;
 	}
 
-	public String getConnectedUserName() {
-		return connectedUserName;
+	public User getRecepient() {
+		return recepient;
 	}
 
-	public void setConnectedUserName(String connectedUserName) {
-		this.connectedUserName = connectedUserName;
+	public void setRecepient(User recepient) {
+		this.recepient = recepient;
 	}
 
 	public String getDate() {
@@ -64,5 +64,5 @@ public class TransactionDTO {
 	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
-	
+
 }

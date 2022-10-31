@@ -1,4 +1,4 @@
-package com.PayMyBuddy.web.dto;
+package com.PayMyBuddy.model.exception;
 
 public class UserExistsException extends Exception{
 
