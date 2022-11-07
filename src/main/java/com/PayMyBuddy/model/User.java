@@ -1,6 +1,7 @@
 package com.PayMyBuddy.model;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -121,6 +122,9 @@ public class User {
 	}
 
 	public List<Transaction> getDebits() {
+		if (debits==null) {
+			debits = new ArrayList<>();
+		}
 		return debits;
 	}
 
@@ -129,6 +133,9 @@ public class User {
 	}
 
 	public List<Transaction> getCredits() {
+		if (credits==null) {
+			credits = new ArrayList<>();
+		}
 		return credits;
 	}
 

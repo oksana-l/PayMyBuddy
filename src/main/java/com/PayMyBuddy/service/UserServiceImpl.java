@@ -1,5 +1,6 @@
 package com.PayMyBuddy.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -25,13 +26,11 @@ import com.PayMyBuddy.repository.UserRepository;
 public class UserServiceImpl implements UserService {
 
 	private UserRepository userRepository;
-	private TransactionServiceImpl transactionService;
 		
 	@Autowired
-	public UserServiceImpl(UserRepository userRepository, TransactionServiceImpl transactionService) {
+	public UserServiceImpl(UserRepository userRepository) {
 		super();
 		this.userRepository = userRepository;
-		this.transactionService = transactionService;
 	}
 	
 	public User addUser(User user) {
@@ -82,52 +81,21 @@ public class UserServiceImpl implements UserService {
 		return userToUpdate;
 	}
 	
-	@Transactional
-	public User addDebitToUser(Long userId, Long transactionId) {
-		User user = getUser(userId);
-		Transaction transaction= transactionService.getTransaction(transactionId);
-		user.addDebit(transaction);
-		return user;
-	}
-	
-	@Transactional
-	public User removeDebitToUser(Long userId, Long transactionId) {
-		User user = getUser(userId);
-		Transaction transaction= transactionService.getTransaction(transactionId);
-		user.removeDebit(transaction);
-		return user;
-	}
-	
-	@Transactional
-	public User addCreditToUser(Long userId, Long transactionId) {
-		User user = getUser(userId);
-		Transaction transaction= transactionService.getTransaction(transactionId);
-		user.addCredit(transaction);
-		return user;
-	}
-	
-	@Transactional
-	public User removeCreditToUser(Long userId, Long transactionId) {
-		User user = getUser(userId);
-		Transaction transaction= transactionService.getTransaction(transactionId);
-		user.removeCredit(transaction);
-		return user;
-	}
-	
 	@Override
-	public User save(UserDTO userDto) throws UserExistsException{
+	public User save(UserDTO userDto) throws UserExistsException {
 	    if (userDto.getUserName() == null || userDto.getEmail() == null) {
 	        throw new UserExistsException(
-	          "There is an user with that name or that email adress: ", userDto.getUserName(),
+	          "There is an user with that name or that email adress: ", 
+	          userDto.getUserName(),
 	          userDto.getEmail());
 	    }
 		User user = new User(userDto.getUserName(), userDto.getEmail(),
-				(userDto.getPassword()), null, new LinkedHashSet<>(), 
-				Arrays.asList(new Transaction()), Arrays.asList(new Transaction()));
+				(userDto.getPassword()), new BigDecimal(0.00), new LinkedHashSet<>(), 
+				Arrays.asList(), Arrays.asList());
 		
 		return userRepository.save(user);
 	}
-
+	
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email);
@@ -167,4 +135,20 @@ public class UserServiceImpl implements UserService {
         }
         return authorities;
     }
+
+	public void updateSender(Transaction transaction) {
+		User sender = transaction.getSender();
+		List<Transaction> debits = sender.getDebits();
+		debits.add(transaction);
+		sender.setBalance(sender.getBalance().subtract(transaction.getAmount()));
+		userRepository.save(sender);
+	}
+
+	public void updateRecepient(Transaction transaction) {
+		User recepient = transaction.getRecepient();
+		List<Transaction> credits = recepient.getCredits();
+		credits.add(transaction);
+		recepient.setBalance(recepient.getBalance().add(transaction.getAmount()));
+		userRepository.save(recepient);
+	}
 }

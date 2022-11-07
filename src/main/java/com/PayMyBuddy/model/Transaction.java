@@ -11,8 +11,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.PayMyBuddy.model.dto.TransactionDTO;
-
 @Entity
 @Table(name = "transaction")
 public class Transaction {
@@ -37,7 +35,8 @@ public class Transaction {
 		
 	}
 
-	public Transaction(User sender, User recepient, String date, String description, BigDecimal amount) {
+	public Transaction(User sender, User recepient, String date, 
+			String description, BigDecimal amount) {
 		super();
 		this.sender = sender;
 		this.recepient = recepient;
@@ -94,13 +93,13 @@ public class Transaction {
 		this.amount = amount;
 	}
 
-    public static Transaction from(TransactionDTO transactionDto){
-    	Transaction transaction = new Transaction();
-    	transaction.setSender(transactionDto.getSender());
-    	transaction.setRecepient(transactionDto.getRecepient());
-    	transaction.setDate(transactionDto.getDate());
-    	transaction.setDescription(transactionDto.getDescription());
-    	transaction.setAmount(transactionDto.getAmount());
-        return transaction;
-    }
+//    public Transaction from(TransactionDTO transactionDto){
+//    	Transaction transaction = new Transaction();
+//    	transaction.setSender(transactionDto.getSender());
+//    	transaction.setRecepient(transactionDto.getRecepient());
+//    	transaction.setDate(transactionDto.getDate());
+//    	transaction.setDescription(transactionDto.getDescription());
+//    	transaction.setAmount(transactionDto.getAmount());
+//        return transaction;
+//    }
 }

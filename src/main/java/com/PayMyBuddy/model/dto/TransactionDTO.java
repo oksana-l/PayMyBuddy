@@ -3,12 +3,11 @@ package com.PayMyBuddy.model.dto;
 import java.math.BigDecimal;
 
 import com.PayMyBuddy.model.Transaction;
-import com.PayMyBuddy.model.User;
 
 public class TransactionDTO {
 	
-	private User sender;
-	private User recepient;
+	private UserForTransactionDTO sender;
+	private UserForTransactionDTO recepient;
 	private String date;
 	private String description;
 	private BigDecimal amount;
@@ -18,26 +17,26 @@ public class TransactionDTO {
 	}
 	
 	public TransactionDTO(Transaction transaction, String description) {
-		this.sender = transaction.getRecepient();
-		this.recepient = transaction.getRecepient();
+		this.sender = new UserForTransactionDTO(transaction.getSender().getUserName());
+		this.recepient = new UserForTransactionDTO(transaction.getRecepient().getUserName());
 		this.description = description;
 		this.date = transaction.getDate();
 		this.amount = transaction.getAmount();
 	}
 
-	public User getSender() {
+	public UserForTransactionDTO getSender() {
 		return sender;
 	}
 
-	public void setSender(User sender) {
+	public void setSender(UserForTransactionDTO sender) {
 		this.sender = sender;
 	}
 
-	public User getRecepient() {
+	public UserForTransactionDTO getRecepient() {
 		return recepient;
 	}
 
-	public void setRecepient(User recepient) {
+	public void setRecepient(UserForTransactionDTO recepient) {
 		this.recepient = recepient;
 	}
 

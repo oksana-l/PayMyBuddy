@@ -3,11 +3,12 @@ package com.PayMyBuddy.service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.PayMyBuddy.model.Transaction;
@@ -21,19 +22,16 @@ import com.PayMyBuddy.repository.UserRepository;
 public class TransactionServiceImpl implements TransactionService{
 
 	private TransactionRepository transactionRepository;
-	
 	private UserRepository userRepository;
+	private UserServiceImpl userService;
 
 	@Autowired
 	public TransactionServiceImpl(TransactionRepository transactionRepository,
-			UserRepository userRepository) {
+			UserRepository userRepository, UserServiceImpl userService) {
 		super();
 		this.transactionRepository = transactionRepository;
 		this.userRepository = userRepository;
-	}
-
-	public Transaction add(Transaction transaction) {
-		return transactionRepository.save(transaction);
+		this.userService = userService;
 	}
 	
 	public List<Transaction> getTransactions() {
@@ -45,39 +43,35 @@ public class TransactionServiceImpl implements TransactionService{
 			new TransactionNotFoundException(id));
 	}
 	
-	public Transaction deleteTransaction(Long id) {
-		Transaction transaction = getTransaction(id);
-		transactionRepository.delete(transaction);
-		return transaction;
-	}
-	
 	@Transactional
-	public Transaction updateTransaction(Long id, Transaction transaction) {
-		Transaction transactionToUpdate = getTransaction(id);
-		transactionToUpdate.setSender(transaction.getSender());
-		transactionToUpdate.setRecepient(transaction.getRecepient());
-		transactionToUpdate.setDate(transaction.getDate());
-		transactionToUpdate.setAmount(transaction.getAmount());
-		transactionToUpdate.setDescription(transaction.getDescription());
-		return transactionToUpdate;
-		
-	}
-	
-	public Transaction save(Authentication auth, TransactionDTO form) {
-		User sender = userRepository.findByEmail(auth.getName());
+	public Transaction save(String senderEmail, TransactionDTO form) {
+		User sender = userRepository.findByEmail(senderEmail);
 		User recepient = userRepository.findByUserName(form.getRecepient().getUserName());
 		Transaction transaction = new Transaction();
 		transaction.setSender(sender);
 		transaction.setDate(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-		transaction.setDescription("Debit");
 		transaction.setAmount(form.getAmount());
 		transaction.setRecepient(recepient);
-		return transactionRepository.save(transaction);
+		Transaction saved = transactionRepository.save(transaction);
+	    userService.updateSender(saved);
+	    userService.updateRecepient(saved);
+		return saved;
 	}
 
-	public List<Transaction> findTransactionsBySenderId(Long id) {
-		return transactionRepository.findTransactionsBySenderId(id);
+	public List<Transaction> findTransactionsByUser(Long id) {
+		List<Transaction> debitTransactions = transactionRepository.findTransactionsBySenderId(id);
+		debitTransactions.stream().forEach(t -> t.setDescription("Debit"));
+		List<Transaction> creditTransactions = transactionRepository.findTransactionsByRecepientId(id);
+		creditTransactions.stream().forEach(t -> t.setDescription("Credit"));
+		List<Transaction> transactions = Stream.concat(debitTransactions.stream(), 
+				creditTransactions.stream()).collect(Collectors.toList());
+		return transactions;
 	}
+	
+	public Long getId(TransactionDTO form) {
+		return transactionRepository.findByRecepientUserName(form.getRecepient().getUserName());
+	}
+
 
 	
 }

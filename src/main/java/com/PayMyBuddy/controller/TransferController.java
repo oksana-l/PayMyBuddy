@@ -1,6 +1,5 @@
 package com.PayMyBuddy.controller;
 
-import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -29,26 +28,22 @@ public class TransferController {
 	@GetMapping
 	public String showTransfer(Authentication auth, Model model) {
 		User user = userService.findUserByEmail(auth.getName());
-		TransactionDTO transaction = new TransactionDTO();
-		transaction.setSender(user);
 		model.addAttribute("transaction", new TransactionDTO());
 		model.addAttribute("connections", user.getConnections());
 		model.addAttribute("transactions", 
-			transactionService.findTransactionsBySenderId(user.getId()));
+			transactionService.findTransactionsByUser(user.getId()));
 		return "transfer";
 	}
 
 	@PostMapping
-	@Transactional
 	public String saveTransaction(@ModelAttribute("transaction") TransactionDTO form, 
 			Authentication auth, Model model) {
 		User user = userService.findUserByEmail(auth.getName());
-		form.setSender(user);
-	    transactionService.save(auth, form);
+		transactionService.save(auth.getName(), form);
 		model.addAttribute("transaction", new TransactionDTO());
 		model.addAttribute("connections", user.getConnections());
 	    model.addAttribute("transactions", 
-	    		transactionService.findTransactionsBySenderId(user.getId()));
+	    		transactionService.findTransactionsByUser(user.getId()));
 	    return "transfer";
 	}
 }

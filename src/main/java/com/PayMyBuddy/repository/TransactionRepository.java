@@ -10,7 +10,9 @@ import com.PayMyBuddy.model.Transaction;
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long>{
 
-	List<Transaction> findTransactionsBySenderId(Long senderId);
-	List<Transaction> findTransactionsByRecepientId(Long recepientId);
+	List<Transaction> findTransactionsBySenderId(Long id);
+	List<Transaction> findTransactionsByRecepientId(Long id);
+	List<Transaction> findTransactionsById(Long id);
+	Long findByRecepientUserName(String userName);
 
 }
