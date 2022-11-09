@@ -1,12 +1,19 @@
 package com.PayMyBuddy.model.exception;
 
+import org.springframework.http.HttpStatus;
+
 public class UserExistsException extends Exception{
 
 	private static final long serialVersionUID = 1L;
 	private String userName;
 	private String email;
 	
-	public UserExistsException(final String userName, final String email, final String message) {
+	public UserExistsException() {
+
+	}
+	
+	public UserExistsException(HttpStatus badRequest, final String userName, 
+			final String email, final String message) {
 		super(message);
 		this.setUserName(userName);
 		this.setEmail(email);

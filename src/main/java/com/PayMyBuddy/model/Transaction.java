@@ -93,7 +93,7 @@ public class Transaction {
 		this.amount = amount;
 	}
 
-//    public Transaction from(TransactionDTO transactionDto){
+//    public Transaction from(TransactionFormDTO transactionDto){
 //    	Transaction transaction = new Transaction();
 //    	transaction.setSender(transactionDto.getSender());
 //    	transaction.setRecepient(transactionDto.getRecepient());

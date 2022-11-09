@@ -3,8 +3,6 @@ package com.PayMyBuddy.service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.transaction.Transactional;
 
@@ -13,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.PayMyBuddy.model.Transaction;
 import com.PayMyBuddy.model.User;
-import com.PayMyBuddy.model.dto.TransactionDTO;
+import com.PayMyBuddy.model.dto.TransactionFormDTO;
 import com.PayMyBuddy.model.exception.TransactionNotFoundException;
 import com.PayMyBuddy.repository.TransactionRepository;
 import com.PayMyBuddy.repository.UserRepository;
@@ -44,9 +42,9 @@ public class TransactionServiceImpl implements TransactionService{
 	}
 	
 	@Transactional
-	public Transaction save(String senderEmail, TransactionDTO form) {
+	public Transaction save(String senderEmail, TransactionFormDTO form) {
 		User sender = userRepository.findByEmail(senderEmail);
-		User recepient = userRepository.findByUserName(form.getRecepient().getUserName());
+		User recepient = userRepository.findByUserName(form.getRecepientUserName());
 		Transaction transaction = new Transaction();
 		transaction.setSender(sender);
 		transaction.setDate(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
@@ -59,17 +57,19 @@ public class TransactionServiceImpl implements TransactionService{
 	}
 
 	public List<Transaction> findTransactionsByUser(Long id) {
-		List<Transaction> debitTransactions = transactionRepository.findTransactionsBySenderId(id);
-		debitTransactions.stream().forEach(t -> t.setDescription("Debit"));
-		List<Transaction> creditTransactions = transactionRepository.findTransactionsByRecepientId(id);
-		creditTransactions.stream().forEach(t -> t.setDescription("Credit"));
-		List<Transaction> transactions = Stream.concat(debitTransactions.stream(), 
-				creditTransactions.stream()).collect(Collectors.toList());
+		List<Transaction> transactions = transactionRepository.findTransactionsBySenderIdOrRecepientId(id, id);
+		transactions.forEach(t -> {
+			if (t.getSender().getId().equals(id)) {
+				t.setDescription("Debit");
+			} else {
+				t.setDescription("Credit");
+			}
+		});
 		return transactions;
 	}
 	
-	public Long getId(TransactionDTO form) {
-		return transactionRepository.findByRecepientUserName(form.getRecepient().getUserName());
+	public Long getId(TransactionFormDTO form) {
+		return transactionRepository.findByRecepientUserName(form.getRecepientUserName());
 	}
 
 

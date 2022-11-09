@@ -39,19 +39,12 @@ public class UserController {
 	
 	@PostMapping
 	public String registerUserAccount(@ModelAttribute("user") UserDTO userDto) throws UserExistsException {
-		try {
-			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-			String encodedPassword = passwordEncoder.encode(userDto.getPassword());
-			userDto.setPassword(encodedPassword);
-			userService.save(userDto);
-		} catch (UserExistsException e) {
-		    if (userDto.getUserName() == null || userDto.getEmail() == null) {
-		        throw new UserExistsException(
-		          "There is an user with that name or that email adress: ", userDto.getUserName(),
-		          userDto.getEmail());
-		    }
-			e.printStackTrace();
-		}
+		
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		String encodedPassword = passwordEncoder.encode(userDto.getPassword());
+		userDto.setPassword(encodedPassword);
+		userService.save(userDto);
+
 		return "redirect:/login";
 	}
 	

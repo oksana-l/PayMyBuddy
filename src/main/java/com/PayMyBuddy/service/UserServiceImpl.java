@@ -9,6 +9,7 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -83,11 +84,10 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public User save(UserDTO userDto) throws UserExistsException {
-	    if (userDto.getUserName() == null || userDto.getEmail() == null) {
-	        throw new UserExistsException(
-	          "There is an user with that name or that email adress: ", 
-	          userDto.getUserName(),
-	          userDto.getEmail());
+	    if (userRepository.findByUserName(userDto.getUserName()) != null ||
+	    		userRepository.findByEmail(userDto.getEmail()) != null) {
+	        throw new UserExistsException(HttpStatus.BAD_REQUEST, "There is an user with that name or that email adress: ", 
+		        	userDto.getUserName(), userDto.getEmail());       
 	    }
 		User user = new User(userDto.getUserName(), userDto.getEmail(),
 				(userDto.getPassword()), new BigDecimal(0.00), new LinkedHashSet<>(), 
@@ -140,8 +140,14 @@ public class UserServiceImpl implements UserService {
 		User sender = transaction.getSender();
 		List<Transaction> debits = sender.getDebits();
 		debits.add(transaction);
-		sender.setBalance(sender.getBalance().subtract(transaction.getAmount()));
-		userRepository.save(sender);
+		BigDecimal balance = sender.getBalance();
+		BigDecimal amount = transaction.getAmount();
+		if (balance.compareTo(amount) >= 0) {
+			sender.setBalance(balance.subtract(amount));
+			userRepository.save(sender);
+		} else { 
+			// Declencher une exception
+		}
 	}
 
 	public void updateRecepient(Transaction transaction) {

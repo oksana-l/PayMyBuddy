@@ -26,8 +26,8 @@
 				</form>
 			</div>
 			<form action="#" class="form-select" method="post" th:object="${transaction}">
-				<select class="form-control select" id="dropDownList" th:field="*{recepient.userName}" required>
-					<option value="0">Select A Connection</option>
+				<select class="form-control select" id="dropDownList" th:field="*{recepientUserName}" required>
+					<option value="" disabled selected>Select A Connection</option>
 					<option th:each="connection : ${connections}"
 						th:value="${connection.userName}" th:text="${connection.userName}"></option>
 				</select> 
@@ -49,12 +49,12 @@
 				<tbody>
 					<tr th:each="transaction : ${transactions}">
 						<td><span th:switch="${transaction.description}">
-								<span th:case="Credit" th:text="${transaction.sender.getUserName}">Connection</span>
-								<span th:case="Debit" th:text="${transaction.recepient.getUserName}">Connection</span>
+								<span th:case="Credit" th:text="${transaction.sender.getUserName}"></span>
+								<span th:case="Debit" th:text="${transaction.recepient.getUserName}"></span>
 							</span></td>
-						<td><span th:text="${transaction.description}">Description</span></td>
-						<td><span th:text="${transaction.date}">Date</span></td>
-						<td><span th:text="${transaction.amount}">Amount</span></td>
+						<td th:text="${transaction.description}"></td> 
+						<td><span th:text="${transaction.date}"></span></td>
+						<td><span th:text="${transaction.amount}"></span></td>
 					</tr>
 				</tbody>
 			</table>
