@@ -142,12 +142,8 @@ public class UserServiceImpl implements UserService {
 		debits.add(transaction);
 		BigDecimal balance = sender.getBalance();
 		BigDecimal amount = transaction.getAmount();
-		if (balance.compareTo(amount) >= 0) {
-			sender.setBalance(balance.subtract(amount));
-			userRepository.save(sender);
-		} else { 
-			// Declencher une exception
-		}
+		sender.setBalance(balance.subtract(amount));
+		userRepository.save(sender);
 	}
 
 	public void updateRecepient(Transaction transaction) {

@@ -1,5 +1,6 @@
 package com.PayMyBuddy.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -7,6 +8,9 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.PayMyBuddy.model.Transaction;
@@ -46,24 +50,29 @@ public class TransactionServiceImpl implements TransactionService{
 		User sender = userRepository.findByEmail(senderEmail);
 		User recepient = userRepository.findByUserName(form.getRecepientUserName());
 		Transaction transaction = new Transaction();
+		Transaction saved = new Transaction();
 		transaction.setSender(sender);
+		transaction.setDescription(form.getDescription());
 		transaction.setDate(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 		transaction.setAmount(form.getAmount());
 		transaction.setRecepient(recepient);
-		Transaction saved = transactionRepository.save(transaction);
+		BigDecimal balance = transaction.getSender().getBalance();
+		BigDecimal amount = form.getAmount();
+		if (balance.compareTo(amount) >= 0) {
+			saved = transactionRepository.save(transaction);
 	    userService.updateSender(saved);
 	    userService.updateRecepient(saved);
+		}
 		return saved;
 	}
 
 	public List<Transaction> findTransactionsByUser(Long id) {
-		List<Transaction> transactions = transactionRepository.findTransactionsBySenderIdOrRecepientId(id, id);
+		List<Transaction> transactions = transactionRepository
+				.findTransactionsBySenderIdOrRecepientId(id, id);
 		transactions.forEach(t -> {
 			if (t.getSender().getId().equals(id)) {
-				t.setDescription("Debit");
-			} else {
-				t.setDescription("Credit");
-			}
+				t.setAmount(t.getAmount().negate());
+			} 
 		});
 		return transactions;
 	}
@@ -71,7 +80,17 @@ public class TransactionServiceImpl implements TransactionService{
 	public Long getId(TransactionFormDTO form) {
 		return transactionRepository.findByRecepientUserName(form.getRecepientUserName());
 	}
-
-
+	
+	public Page<Transaction> findPage(int pageNumber, Long id) {
+		Pageable pageable = PageRequest.of(pageNumber - 1, 5);
+		Page<Transaction> transactions = transactionRepository
+				.findTransactionsBySenderIdOrRecepientId(id, id, pageable);
+		transactions.forEach(t -> {
+			if (t.getSender().getId().equals(id)) {
+				t.setAmount(t.getAmount().negate());
+			} 
+		});
+		return transactions;
+	}
 	
 }

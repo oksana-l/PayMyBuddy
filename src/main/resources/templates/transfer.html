@@ -31,7 +31,8 @@
 					<option th:each="connection : ${connections}"
 						th:value="${connection.userName}" th:text="${connection.userName}"></option>
 				</select> 
-				<input class="quantity" name="0" min="0" value="1" type="number" step=".01" th:field="*{amount}" required>
+				<input type="text" th:field="*{description}" class="description_form" placeholder="Description" required>
+				<input type="number" th:field="*{amount}" class="quantity" name="0" min="0" value="1" step=".01" required>
 				<button type="submit" class="btn btn-success">Pay</button>
 			</form>
 		</div>
@@ -48,16 +49,37 @@
 				</thead>
 				<tbody>
 					<tr th:each="transaction : ${transactions}">
-						<td><span th:switch="${transaction.description}">
-								<span th:case="Credit" th:text="${transaction.sender.getUserName}"></span>
-								<span th:case="Debit" th:text="${transaction.recepient.getUserName}"></span>
-							</span></td>
+						<td>
+							<span th:if="${transaction.amount > 0}" th:text="${transaction.senderUserName}"></span>
+							<span th:if="${transaction.amount < 0}" th:text="${transaction.recepientUserName}"></span>
+						</td>
 						<td th:text="${transaction.description}"></td> 
-						<td><span th:text="${transaction.date}"></span></td>
-						<td><span th:text="${transaction.amount}"></span></td>
+						<td th:text="${transaction.date}"></td>
+						<td th:text="${transaction.amount}"></td>
 					</tr>
 				</tbody>
 			</table>
+			<div class="center">
+				<div class="pagination">
+					<a th:if="${currentPage > 1}" 
+					   th:href="@{/transfer/{pageNumber} (pageNumber = ${pageNumber - 1})}" >&laquo;</a>
+					<span th:unless="${currentPage > 1}">&laquo;</span>
+				</div>
+				<div class="pagination"
+				    th:each="pageNumber : ${#numbers.sequence(1, totalPages)}">
+				    <a th:if="${pageNumber != currentPage}" 
+				       th:href="@{/transfer/{pageNumber} (pageNumber = ${pageNumber})}"
+				       th:text="${pageNumber}"></a>  
+				    <span th:unless="${pageNumber != currentPage}"
+				    	  th:text="${pageNumber}" th:class="active">
+				    </span>
+				</div>
+				<div class="pagination">
+					<a th:if="${currentPage < totalPages}" 
+					   th:href="@{/transfer/{pageNumber} (pageNumber = ${pageNumber})}">&raquo;</a>
+					   <span th:unless="${currentPage < totalPages}">&raquo;</span>
+				</div>
+			</div>
 		</div>
 	</div>
 </body>

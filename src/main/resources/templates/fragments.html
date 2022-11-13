@@ -15,14 +15,21 @@
 	        <nav>
 	            <h1 class="logo">PayMyBuddy</h1>
 	            <ul>
-	               <li><a class="active" href="#">Home</a></li>
-	               <li><a href="/transfer">Transfer</a></li>
-	               <li><a href="#">Profile</a></li>
-	               <li><a href="#">Contact</a></li>
-	               <li><a href="/login">Log off</a></li>
+	               <li th:classappend="${#httpServletRequest.getRequestURI() == '/home' ? 'active':''}">
+	               		<a th:href="@{/home}">Home</a></li>
+	               <li th:classappend="${#httpServletRequest.getRequestURI() == '/myConnections' ? 'active':''}">
+	               		<a th:href="@{/myConnections}">Connections</a></li>
+	               <li th:classappend="${#httpServletRequest.getRequestURI() == '/transfer' ? 'active':''}">
+	               		<a th:href="@{/transfer}">Transfer</a></li>
+	               <li th:classappend="${#httpServletRequest.getRequestURI() == '/profile' ? 'active':''}">
+	               		<a th:href="@{/profile}">Profile</a></li>
+	               <li th:classappend="${#httpServletRequest.getRequestURI() == '/contact' ? 'active':''}">
+	               		<a th:href="@{/contact}">Contact</a></li>
+	               <li th:classappend="${#httpServletRequest.getRequestURI() == '/login' ? 'active':''}">
+	               		<a th:href="@{/login}">Log off</a></li>
 	            </ul>
 	        </nav>
-			<h3 class="header">Home / </h3>
+			<h3 class="header" th:text="${#httpServletRequest.getRequestURI()}"></h3>
         </div>
         <div class="footer" th:fragment="footer">
 	     	&copy; 2022 OpenClassRoom
