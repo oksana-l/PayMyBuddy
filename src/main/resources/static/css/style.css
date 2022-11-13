@@ -254,6 +254,14 @@ td {
 	border: 1px solid #ddd;
 }
 
+.pagination span {
+	color: black;
+	float: left;
+	padding: 8px 16px;
+	text-decoration: none;
+	border: 1px solid #ddd;
+}
+
 .pagination .active {
 	background-color: #4CAF50;
 	color: white;

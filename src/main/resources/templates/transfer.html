@@ -76,7 +76,7 @@
 				</div>
 				<div class="pagination">
 					<a th:if="${currentPage < totalPages}" 
-					   th:href="@{/transfer/{pageNumber} (pageNumber = ${pageNumber})}">&raquo;</a>
+					   th:href="@{'/transfer/' + ${currentPage + 1}}">&raquo;</a>
 					   <span th:unless="${currentPage < totalPages}">&raquo;</span>
 				</div>
 			</div>

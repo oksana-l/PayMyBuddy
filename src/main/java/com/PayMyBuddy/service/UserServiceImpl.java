@@ -63,12 +63,6 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 	
-	public User deleteUser(Long id) {
-		User user = getUser(id);
-		userRepository.delete(user);
-		return user ;
-	}
-	
 	@Transactional
 	public User updateUser(Long id, User user) {
 		User userToUpdate = getUser(id);

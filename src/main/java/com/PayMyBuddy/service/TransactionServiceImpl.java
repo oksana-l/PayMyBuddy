@@ -62,7 +62,7 @@ public class TransactionServiceImpl implements TransactionService{
 			saved = transactionRepository.save(transaction);
 	    userService.updateSender(saved);
 	    userService.updateRecepient(saved);
-		}
+		} // else : declencher une erreur
 		return saved;
 	}
 

@@ -22,8 +22,9 @@ public class ConnectionServiceImpl implements ConnectionService{
 		
 		User user = userRepository.findByEmail(auth.getName());
 		User connectedUser = userRepository.findByEmail(addConnectionDto.getEmail());
-	
-		user.getConnections().add(connectedUser);
+		if (connectedUser != null) {
+			user.getConnections().add(connectedUser);
+		} // else : declencher une erreur
 		return userRepository.save(user);
 	}
 }
