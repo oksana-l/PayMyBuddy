@@ -29,20 +29,27 @@ public class ConnectionController {
 	
 	@GetMapping
 	public String showFormAddConnection(Authentication auth, Model model) {
+		
 		User user = userService.findUserByEmail(auth.getName());
-		model.addAttribute("connections", user.getConnections().stream()
-				.map(u -> new ConnectionDTO(u)).collect(Collectors.toList()));
-		model.addAttribute("connection", new AddConnectionDTO());
+		view(user, model);
+		
 		return "myConnections";
 	}
 	
 	@PostMapping
 	public String addConnection(@ModelAttribute("connection") AddConnectionDTO addConnectionDto,
 			Authentication auth, Model model) {
+		
 		User user = connectionService.save(auth, addConnectionDto);
+		view(user, model);
+		
+		return "myConnections";
+	}
+	
+	public void view(User user, Model model) {
+		
 		model.addAttribute("connections", user.getConnections().stream()
 				.map(u -> new ConnectionDTO(u)).collect(Collectors.toList()));
 		model.addAttribute("connection", new AddConnectionDTO());
-		return "myConnections";
 	}
 }

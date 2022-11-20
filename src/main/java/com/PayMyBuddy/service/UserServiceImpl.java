@@ -147,4 +147,9 @@ public class UserServiceImpl implements UserService {
 		recepient.setBalance(recepient.getBalance().add(transaction.getAmount()));
 		userRepository.save(recepient);
 	}
+	
+	public boolean userHasAmount(String senderEmail, BigDecimal amount) {
+		User user = userRepository.findByEmail(senderEmail);
+		return user.getBalance().compareTo(amount)>=0;	
+	}
 }

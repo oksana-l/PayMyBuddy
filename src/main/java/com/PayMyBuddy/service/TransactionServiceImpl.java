@@ -1,6 +1,5 @@
 package com.PayMyBuddy.service;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -11,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.PayMyBuddy.model.Transaction;
@@ -47,6 +47,7 @@ public class TransactionServiceImpl implements TransactionService{
 	
 	@Transactional
 	public Transaction save(String senderEmail, TransactionFormDTO form) {
+		
 		User sender = userRepository.findByEmail(senderEmail);
 		User recepient = userRepository.findByUserName(form.getRecepientUserName());
 		Transaction transaction = new Transaction();
@@ -56,13 +57,10 @@ public class TransactionServiceImpl implements TransactionService{
 		transaction.setDate(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 		transaction.setAmount(form.getAmount());
 		transaction.setRecepient(recepient);
-		BigDecimal balance = transaction.getSender().getBalance();
-		BigDecimal amount = form.getAmount();
-		if (balance.compareTo(amount) >= 0) {
-			saved = transactionRepository.save(transaction);
+		saved = transactionRepository.save(transaction);
 	    userService.updateSender(saved);
 	    userService.updateRecepient(saved);
-		} // else : declencher une erreur
+
 		return saved;
 	}
 
@@ -83,6 +81,22 @@ public class TransactionServiceImpl implements TransactionService{
 	
 	public Page<Transaction> findPage(int pageNumber, Long id) {
 		Pageable pageable = PageRequest.of(pageNumber - 1, 5);
+		Page<Transaction> transactions = transactionRepository
+				.findTransactionsBySenderIdOrRecepientId(id, id, pageable);
+		transactions.forEach(t -> {
+			if (t.getSender().getId().equals(id)) {
+				t.setAmount(t.getAmount().negate());
+			} 
+		});
+		return transactions;
+	}
+	
+	public Page<Transaction> findTransactionWithSorting(
+			String field, String direction, int pageNumber, Long id) {
+	    Sort sort = direction.equalsIgnoreCase(Sort.Direction.ASC.name())?
+	            Sort.by(field).ascending(): Sort.by(field).descending();
+	    Pageable pageable = PageRequest.of(pageNumber - 1,5, sort);
+	    
 		Page<Transaction> transactions = transactionRepository
 				.findTransactionsBySenderIdOrRecepientId(id, id, pageable);
 		transactions.forEach(t -> {
