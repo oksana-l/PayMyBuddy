@@ -91,11 +91,7 @@ public class TransactionServiceImpl implements TransactionService{
 		return transactions;
 	}
 	
-	public Page<Transaction> findTransactionWithSorting(
-			String field, String direction, int pageNumber, Long id) {
-	    Sort sort = direction.equalsIgnoreCase(Sort.Direction.ASC.name())?
-	            Sort.by(field).ascending(): Sort.by(field).descending();
-	    Pageable pageable = PageRequest.of(pageNumber - 1,5, sort);
+	public Page<Transaction> findTransactionWithSorting(Pageable pageable, Long id) {
 	    
 		Page<Transaction> transactions = transactionRepository
 				.findTransactionsBySenderIdOrRecepientId(id, id, pageable);
