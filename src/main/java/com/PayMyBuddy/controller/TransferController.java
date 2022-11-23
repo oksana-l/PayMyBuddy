@@ -7,10 +7,14 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -40,7 +44,7 @@ public class TransferController {
             @RequestParam (value="field", required=false, defaultValue="date")String field,
             @RequestParam(value="sortDir", required=false, defaultValue="desc") String sortDir) {
 		
-		view(model, auth, currentPage, field, sortDir);
+		view(model, auth, currentPage, field, sortDir, new TransactionFormDTO());
 		return "transfer";
 	}
 
@@ -52,30 +56,34 @@ public class TransferController {
             Authentication auth, Model model, BindingResult result) {
 		
 		if (! userService.userHasAmount(auth.getName(), form.getAmount())) {
-			ObjectError error = new ObjectError("amount", "Le solde n'est pas suffisant");
+			FieldError error = new FieldError("transaction", "amount", "Le solde n'est pas suffisant");
 			result.addError(error);
 		}
 		if (!result.hasErrors()) {
 			transactionService.save(auth.getName(), form);
-		}		
-	    if (result.hasErrors()) {
-	    	model.addAttribute("transaction", form);
-	    }
-		view(model, auth, currentPage, field, sortDir);
+		}	
+		
+		view(model, auth, currentPage, field, sortDir,
+				result.hasErrors() ? form : new TransactionFormDTO());
+		
 	    return "transfer";
 	}
 	
-	public void view(Model model, Authentication auth, int currentPage, String field,
-			String sortDir) {
+	private void view(Model model, Authentication auth, int currentPage, String field,
+			String sortDir, TransactionFormDTO form) {
 		
 		User user = userService.findUserByEmail(auth.getName());
-		Page<Transaction> page = transactionService.findTransactionWithSorting(field, sortDir, currentPage, user.getId());
+
+	    Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name())?
+	            Sort.by(field).ascending(): Sort.by(field).descending();
+	    Pageable pageable = PageRequest.of(currentPage - 1,5, sort);
+		Page<Transaction> page = transactionService.findTransactionWithSorting(pageable, user.getId());
 	    int totalPages = page.getTotalPages();
 	    long totalItems = page.getTotalElements();
 	    
 	    List<Transaction> transactions = page.getContent();
 	    
-		model.addAttribute("transaction", new TransactionFormDTO());
+		model.addAttribute("transaction", form);
 		model.addAttribute("connections", user.getConnections().stream()
 				.map(u -> new ConnectionDTO(u)).collect(Collectors.toList()));
 		model.addAttribute("transactions", transactions.stream()
