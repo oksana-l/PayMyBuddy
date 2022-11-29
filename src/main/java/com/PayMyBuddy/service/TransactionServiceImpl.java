@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.PayMyBuddy.model.Transaction;
@@ -40,11 +39,13 @@ public class TransactionServiceImpl implements TransactionService{
 		return transactionRepository.findAll();
 	}
 	
+	@Override
 	public Transaction getTransaction(Long id) {
 		return transactionRepository.findById(id).orElseThrow(() -> 
 			new TransactionNotFoundException(id));
 	}
 	
+	@Override
 	@Transactional
 	public Transaction save(String senderEmail, TransactionFormDTO form) {
 		
@@ -64,6 +65,7 @@ public class TransactionServiceImpl implements TransactionService{
 		return saved;
 	}
 
+	@Override
 	public List<Transaction> findTransactionsByUser(Long id) {
 		List<Transaction> transactions = transactionRepository
 				.findTransactionsBySenderIdOrRecepientId(id, id);
@@ -75,10 +77,12 @@ public class TransactionServiceImpl implements TransactionService{
 		return transactions;
 	}
 	
+	@Override
 	public Long getId(TransactionFormDTO form) {
 		return transactionRepository.findByRecepientUserName(form.getRecepientUserName());
 	}
 	
+	@Override
 	public Page<Transaction> findPage(int pageNumber, Long id) {
 		Pageable pageable = PageRequest.of(pageNumber - 1, 5);
 		Page<Transaction> transactions = transactionRepository
@@ -91,6 +95,7 @@ public class TransactionServiceImpl implements TransactionService{
 		return transactions;
 	}
 	
+	@Override
 	public Page<Transaction> findTransactionWithSorting(Pageable pageable, Long id) {
 	    
 		Page<Transaction> transactions = transactionRepository

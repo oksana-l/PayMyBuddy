@@ -15,7 +15,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -51,7 +50,7 @@ public class TransferController {
 	@PostMapping("/transfer")
 	public String saveTransaction(@Valid @ModelAttribute("transaction") TransactionFormDTO form, 
 			@RequestParam(value="pageNumber", required=false, defaultValue="1") int currentPage,
-            @RequestParam (value="field", required=false, defaultValue="date")String field,
+            @RequestParam (value="field", required=false, defaultValue="date") String field,
             @RequestParam(value="sortDir", required=false, defaultValue="desc") String sortDir,
             Authentication auth, Model model, BindingResult result) {
 		

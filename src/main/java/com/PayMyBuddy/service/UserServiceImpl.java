@@ -9,7 +9,6 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -42,27 +41,31 @@ public class UserServiceImpl implements UserService {
 		return userRepository.findAll();
 	}
 	
+	@Override
 	public User getUser(Long id) {
 		return userRepository.findById(id).orElseThrow(() -> 
 			new UserNotFoundException(id));
 	}
 	
+	@Override
 	public User findUserByUserName(String userName) {
         User user = userRepository.findByUserName(userName);
         if (user == null) {
-            throw new UsernameNotFoundException("No user found with userName: " + userName);
+            throw new UsernameNotFoundException("No user found with userName : " + userName);
         }        
         return user;
     }
 	
+	@Override
 	public User findUserByEmail(String email) {
         User user = userRepository.findByEmail(email);
         if (user == null) {
-            throw new UsernameNotFoundException("No user found with email: " + email);
+            throw new UsernameNotFoundException("No user found with email : " + email);
         }        
         return user;
     }
 	
+	@Override
 	@Transactional
 	public User updateUser(Long id, User user) {
 		User userToUpdate = getUser(id);
@@ -78,16 +81,17 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public User save(UserDTO userDto) throws UserExistsException {
-	    if (userRepository.findByUserName(userDto.getUserName()) != null ||
-	    		userRepository.findByEmail(userDto.getEmail()) != null) {
-	        throw new UserExistsException(HttpStatus.BAD_REQUEST, "There is an user with that name or that email adress: ", 
-		        	userDto.getUserName(), userDto.getEmail());       
-	    }
 		User user = new User(userDto.getUserName(), userDto.getEmail(),
 				(userDto.getPassword()), new BigDecimal(0.00), new LinkedHashSet<>(), 
 				Arrays.asList(), Arrays.asList());
 		
 		return userRepository.save(user);
+	}
+	
+	@Override
+	public boolean ifUserExist(UserDTO userDto) {
+		return userRepository.findByUserName(userDto.getUserName()) != null ||
+	    		userRepository.findByEmail(userDto.getEmail()) != null;
 	}
 	
 	@Override
@@ -130,6 +134,7 @@ public class UserServiceImpl implements UserService {
         return authorities;
     }
 
+    @Override
 	public void updateSender(Transaction transaction) {
 		User sender = transaction.getSender();
 		List<Transaction> debits = sender.getDebits();
@@ -140,6 +145,7 @@ public class UserServiceImpl implements UserService {
 		userRepository.save(sender);
 	}
 
+    @Override
 	public void updateRecepient(Transaction transaction) {
 		User recepient = transaction.getRecepient();
 		List<Transaction> credits = recepient.getCredits();
@@ -148,6 +154,7 @@ public class UserServiceImpl implements UserService {
 		userRepository.save(recepient);
 	}
 	
+    @Override
 	public boolean userHasAmount(String senderEmail, BigDecimal amount) {
 		User user = userRepository.findByEmail(senderEmail);
 		return user.getBalance().compareTo(amount)>=0;	

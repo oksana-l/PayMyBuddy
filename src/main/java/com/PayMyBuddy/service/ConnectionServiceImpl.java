@@ -11,20 +11,25 @@ import com.PayMyBuddy.repository.UserRepository;
 public class ConnectionServiceImpl implements ConnectionService{
 	
 	private UserRepository userRepository;
-	
+
 	public ConnectionServiceImpl(UserRepository userRepository) {
 		super();
 		this.userRepository = userRepository;
 	}
 
-	
+	@Override
 	public User save(Authentication auth, AddConnectionDTO addConnectionDto) {
 		
 		User user = userRepository.findByEmail(auth.getName());
 		User connectedUser = userRepository.findByEmail(addConnectionDto.getEmail());
-		if (connectedUser != null) {
-			user.getConnections().add(connectedUser);
-		} // else : declencher une erreur
+		user.getConnections().add(connectedUser);
+		
 		return userRepository.save(user);
+	}
+	
+	@Override
+	public boolean ifUserExist(AddConnectionDTO addConnectionDto) {
+		
+		return  userRepository.findByEmail(addConnectionDto.getEmail()) != null;
 	}
 }

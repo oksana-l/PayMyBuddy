@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,14 +40,22 @@ public class UserController {
 	}
 	
 	@PostMapping
-	public String registerUserAccount(@ModelAttribute("user") UserDTO userDto) throws UserExistsException {
+	public String registerUserAccount(@ModelAttribute("user") UserDTO userDto,
+			BindingResult result, Model model) throws UserExistsException  {
 		
-		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-		String encodedPassword = passwordEncoder.encode(userDto.getPassword());
-		userDto.setPassword(encodedPassword);
-		userService.save(userDto);
-
-		return "redirect:/login";
+		if (userService.ifUserExist(userDto)) {
+			FieldError error = new FieldError("user", "email", "L'utilisateur existe déjà");
+			result.addError(error);
+		}
+		if (!result.hasErrors()) {
+			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+			String encodedPassword = passwordEncoder.encode(userDto.getPassword());
+			userDto.setPassword(encodedPassword);
+			userService.save(userDto);
+			return "redirect:/login";
+		}
+		model.addAttribute(userDto);
+		return "registration";
 	}
 	
 }

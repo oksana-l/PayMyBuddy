@@ -26,15 +26,17 @@
 				</form>
 			</div>
 			<form action="#" class="form-select" method="post" th:object="${transaction}">
-				<select class="form-control select" id="dropDownList" th:field="*{recepientUserName}" required>
-					<option value="" disabled selected>Select A Connection</option>
-					<option th:each="connection : ${connections}"
-						th:value="${connection.userName}" th:text="${connection.userName}"></option>
-				</select> 
-				<input type="text" th:field="*{description}" class="description_form" placeholder="Description" required>
-				<input type="number" th:field="*{amount}" class="quantity" name="0" min="0" value="1" step=".01" required>
-				<button type="submit" class="btn btn-success">Pay</button>
-				<div th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}"></div>
+				<div class="form-select-select">
+					<select class="form-control select" id="dropDownList" th:field="*{recepientUserName}" required>
+						<option value="" disabled selected>Select A Connection</option>
+						<option th:each="connection : ${connections}"
+							th:value="${connection.userName}" th:text="${connection.userName}"></option>
+					</select> 
+					<input type="text" th:field="*{description}" class="description_form" placeholder="Description" required>
+					<input type="number" th:field="*{amount}" class="quantity" name="0" min="0" value="1" step=".01" required>
+					<button type="submit" class="btn btn-success">Pay</button>
+				</div>
+				<div class="error" th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}"></div>
 			</form>
 		</div>
 		<div class="transaction">

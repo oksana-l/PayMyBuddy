@@ -143,11 +143,6 @@ nav .menu-btn i {
    justify-content: space-between;
 }
 
-.transaction {
-   width: 100%;
-   margin-top: 3%;
-}
-
 .contenant {
    display: flex;
    flex-direction: column;
@@ -183,34 +178,56 @@ nav .menu-btn i {
 }
 
 .form-select {
-   display: flex;
    justify-content: space-around;
    background: rgba(0, 0, 5, 0.05);
    color: rgba(0, 0, 0, 0.5);
    padding: 10px;
 }
 
-.form-add {
+.form-select-select {
+	display: flex;
+	justify-content: space-around;
+	padding: 10px;
+}
+.form-add-form {
    display: flex;
    width: 100%;
+}
+
+.deja_venu {
+	margin-top: 2%;
+}
+.description_form {
+	width: 35%;
+	padding-left: 2%;
+}
+
+.email {
+   width: 40%;
+   margin-right: 3%;
+}
+
+.error {
+	display: flex;
+	width: 100%;
+	color: rgba(255,0,0);
+	justify-content: center;
+	margin-top: 1%;
+	margin-bottom: 0.5%;
 }
 
 .select {
    width: 25%;
 }
 
-.description_form {
-	width: 35%;
-	padding-left: 2%;
-}
-.email {
-   width: 40%;
-   margin-right: 3%;
-}
-
 .table {
    border: 1mm;
    border-color: #111;
+}
+
+.transaction {
+   width: 100%;
+   margin-top: 3%;
 }
 
 thead {
