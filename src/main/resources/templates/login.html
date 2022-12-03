@@ -23,21 +23,23 @@
 				style="margin: auto">
 				<h1 class="form-title">LOGIN</h1>
 				<br />
-				<div align="center" th:if="${param.error}">
-					<p style="font-size: 20; color: #FF1C19;">E-mail or password is
-						invalid</p>
-				</div>
-
 				<input type="text" id="username" name="username"
-					th:placeholder="Username" class="form-control" /> <br /> <input
+					th:placeholder="Username" class="form-control" required/> <br /> <input
 					type="password" th:placeholder="Password" id="password"
-					name="password" class="form-control" /> <br />
-
+					name="password" class="form-control" required/> <br />
+				<div align="center" th:if="${param.error}">
+					<p style="font-size: 20; color: #FF1C19;">E-mail ou mot de passe sont
+						incorrectes</p>
+				</div>
+				<div class="form-group">
+                    <input type="checkbox" name="Remember"/> 
+                    <label>Remember me</label><br />
+                </div>
 				<div class="form-group">
 					<button type="submit" class="btn btn-primary">Login</button>
 				</div>
 			</form>
-			<div>Vous êtes nouveau ? Cliquez <a th:href="@{/registration.html}">ici</a></div>
+			<div>Vous êtes nouveau ? Cliquez <a href="/registration">ici</a></div>
 		</div>
 	</div>
 </body>

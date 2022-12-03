@@ -12,7 +12,6 @@ import com.PayMyBuddy.model.dto.UserDTO;
 import com.PayMyBuddy.model.exception.UserExistsException;
 
 public interface UserService extends UserDetailsService{
-	User save(UserDTO registrationDto) throws UserExistsException;
 
 	UserDetails loadUserByEmail(String email) throws UsernameNotFoundException;
 
@@ -27,6 +26,8 @@ public interface UserService extends UserDetailsService{
 	void updateRecepient(Transaction transaction);
 
 	boolean userHasAmount(String senderEmail, BigDecimal amount);
+
+	User save(UserDTO registrationDto) throws UserExistsException;
 
 	User getUser(Long id);
 

@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +15,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.AdditionalAnswers;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.PayMyBuddy.model.Transaction;
@@ -23,37 +23,30 @@ import com.PayMyBuddy.model.User;
 import com.PayMyBuddy.model.dto.UserDTO;
 import com.PayMyBuddy.model.exception.UserExistsException;
 import com.PayMyBuddy.repository.UserRepository;
+import com.PayMyBuddy.service.UserService;
 import com.PayMyBuddy.service.UserServiceImpl;
 
 public class UserServiceImplTest {
 
-	UserRepository userRepository;
-	UserServiceImpl userService;
-	Optional<User> user;
-	User connectedUser;
-	Transaction transaction;
-	List<Transaction> credits  = new ArrayList<Transaction>();
-	List<Transaction> debits = new ArrayList<Transaction>();
+	private UserRepository userRepository;
+	private UserService userService;
+	private Optional<User> user;
+	private User connectedUser;
+	private Transaction transaction;
+	private List<Transaction> credits  = new ArrayList<Transaction>();
+	private List<Transaction> debits = new ArrayList<Transaction>();
 	
 	@BeforeEach
 	public void setUp() {
 		userRepository = mock(UserRepository.class);
 		userService = new UserServiceImpl(userRepository);
-		user = Optional.ofNullable(new User("Jhon", "jhon@moi.meme", "pass", 
-				new BigDecimal(0.00), new LinkedHashSet<>(), 
-				credits, debits));
+		user = Optional.of(new User("Jhon", "jhon@moi.meme", "pass", new BigDecimal(0.00), 
+				new LinkedHashSet<>(), credits, debits));
 		connectedUser = new User("Peter", "peter@moi.meme", "pass", new BigDecimal(30.00), 
 				new LinkedHashSet<>(), credits, debits);
 		transaction = new Transaction(connectedUser, user.get(), "22/11/2021", "Cadeau",
 				new BigDecimal(10.00));
 		debits.add(transaction);
-	}
-	
-	@Test
-	public void shouldAddUserTest() {
-		when(userRepository.save(user.get())).thenReturn(user.get());
-		
-		Assertions.assertEquals(userService.addUser(user.get()).getUserName(), "Jhon");
 	}
 	
 	@Test
@@ -97,22 +90,38 @@ public class UserServiceImplTest {
 	}
 	
 	@Test
-	public void shouldUpdateUser() {
-		User updatedUser = new User("Peter", "peter@moi.meme", "pass", new BigDecimal(30.00), 
-				new LinkedHashSet<>(), Arrays.asList(), Arrays.asList());
-		updatedUser.getConnections().add(connectedUser);
-		
+	public void shouldUpdateUserTest() {
 		when(userRepository.findById(any())).thenReturn(user);
 		
-		Assertions.assertEquals(userService.updateUser((long) 1, updatedUser).getUserName(),
-				updatedUser.getUserName());
+		User userForUpdate = new User("Peter", "peter@moi.meme", "password", new BigDecimal(30.00), 
+				new LinkedHashSet<>(), null, null);
+		userForUpdate.getConnections().add(connectedUser);
+		User updatedUser = userService.updateUser((long) 1, userForUpdate);
+		
+		Assertions.assertEquals(updatedUser.getUserName(), userForUpdate.getUserName());
+		Assertions.assertEquals(updatedUser.getEmail(), userForUpdate.getEmail());
+		Assertions.assertEquals(updatedUser.getPassword(), userForUpdate.getPassword());
+		Assertions.assertEquals(updatedUser.getBalance(), userForUpdate.getBalance());
+		Assertions.assertEquals(updatedUser.getConnections(), userForUpdate.getConnections());
+		Assertions.assertEquals(updatedUser.getCredits(), userForUpdate.getCredits());
+		Assertions.assertEquals(updatedUser.getDebits(), userForUpdate.getDebits());
 	}
 	
-	@Test //??????
+	@Test
 	public void shouldSaveTest() throws UserExistsException {
-		when(userRepository.save(any())).thenReturn(user.get());
+		when(userRepository.save(any())).then(AdditionalAnswers.returnsFirstArg());
+		
+		user.get().setCredits(credits);
 		UserDTO userDto = new UserDTO(user.get());
-		Assertions.assertEquals(userService.save(userDto).getEmail(), user.get().getEmail());
+		User savedUser = userService.save(userDto);
+		
+		Assertions.assertEquals(savedUser.getUserName(), user.get().getUserName());
+		Assertions.assertEquals(savedUser.getEmail(), user.get().getEmail());
+		Assertions.assertEquals(savedUser.getPassword(), user.get().getPassword());
+		Assertions.assertEquals(savedUser.getBalance(), user.get().getBalance());
+		Assertions.assertEquals(savedUser.getConnections(), user.get().getConnections());
+		Assertions.assertEquals(savedUser.getDebits(), user.get().getDebits());
+		Assertions.assertEquals(savedUser.getCredits(), user.get().getCredits());
 	}
 	
 	@Test
@@ -121,6 +130,7 @@ public class UserServiceImplTest {
 		when(userRepository.findByUserName("Jhon")).thenReturn(user.get());
 		when(userRepository.findByEmail("peter@moi.meme")).thenReturn(null);
 		when(userRepository.findByEmail("jhon@moi.meme")).thenReturn(user.get());
+		
 		UserDTO userDto1 = new UserDTO(user.get());
 		UserDTO userDto2 = new UserDTO(connectedUser);
 		
@@ -131,13 +141,18 @@ public class UserServiceImplTest {
 	@Test
 	public void shouldUpdateSenderTest() {
 		userService.updateSender(transaction);
+		
 		verify(userRepository,times(1)).save(connectedUser);
+		Assertions.assertEquals(connectedUser.getBalance(), new BigDecimal(20.00));
 	}
 	
 	@Test
 	public void shouldUpdateRecepientTest() {
 		userService.updateRecepient(transaction);
+		
 		verify(userRepository,times(1)).save(user.get());
+		Assertions.assertEquals(user.get().getBalance(), new BigDecimal(10.00));
+		
 	}
 	
 	@Test

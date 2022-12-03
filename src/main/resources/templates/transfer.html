@@ -32,8 +32,8 @@
 						<option th:each="connection : ${connections}"
 							th:value="${connection.userName}" th:text="${connection.userName}"></option>
 					</select> 
-					<input type="text" th:field="*{description}" class="description_form" placeholder="Description" required>
-					<input type="number" th:field="*{amount}" class="quantity" name="0" min="0" value="1" step=".01" required>
+					<input type="text" th:field="*{description}" class="description_form" placeholder="Description" maxlength="200"required>
+					<input type="number" th:field="*{amount}" class="quantity" min="1" step=".01" required>
 					<button type="submit" class="btn btn-success">Pay</button>
 				</div>
 				<div class="error" th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}"></div>

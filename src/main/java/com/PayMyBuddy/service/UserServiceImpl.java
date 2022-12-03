@@ -32,15 +32,7 @@ public class UserServiceImpl implements UserService {
 		super();
 		this.userRepository = userRepository;
 	}
-	
-	public User addUser(User user) {
-		return userRepository.save(user);
-	}
-	
-	public List<User> getUsers() {
-		return userRepository.findAll();
-	}
-	
+
 	@Override
 	public User getUser(Long id) {
 		return userRepository.findById(id).orElseThrow(() -> 

@@ -9,6 +9,6 @@ public interface ConnectionService {
 
 	User save(Authentication auth, AddConnectionDTO addConnectionDto);
 
-	boolean ifUserExist(AddConnectionDTO addConnectionDto);
+	boolean isUserExist(String email);
 
 }

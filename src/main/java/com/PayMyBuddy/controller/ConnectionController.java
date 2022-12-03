@@ -17,18 +17,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.PayMyBuddy.model.User;
 import com.PayMyBuddy.model.dto.AddConnectionDTO;
 import com.PayMyBuddy.model.dto.ConnectionDTO;
-import com.PayMyBuddy.service.ConnectionServiceImpl;
-import com.PayMyBuddy.service.UserServiceImpl;
+import com.PayMyBuddy.service.ConnectionService;
+import com.PayMyBuddy.service.UserService;
 
 @Controller
 @RequestMapping("/myConnections")
 public class ConnectionController {
 
 	@Autowired
-	private UserServiceImpl userService;
+	private UserService userService;
 	
 	@Autowired
-	private ConnectionServiceImpl connectionService;
+	private ConnectionService connectionService;
 	
 	@GetMapping
 	public String showFormAddConnection(Authentication auth, Model model,
@@ -43,7 +43,7 @@ public class ConnectionController {
 			@RequestParam (value="field", required=false, defaultValue="date") String field,
 			Authentication auth, Model model, BindingResult result) {
 		
-		if (!connectionService.ifUserExist(addConnectionDto)) {
+		if (!connectionService.isUserExist(addConnectionDto.getEmail())) {
 			FieldError error = new FieldError("connection", "email", "Cet utilisateur n'existe pas");
 			result.addError(error);
 		}

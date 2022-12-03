@@ -28,8 +28,8 @@ public class ConnectionServiceImpl implements ConnectionService{
 	}
 	
 	@Override
-	public boolean ifUserExist(AddConnectionDTO addConnectionDto) {
+	public boolean isUserExist(String email) {
 		
-		return  userRepository.findByEmail(addConnectionDto.getEmail()) != null;
+		return  userRepository.findByEmail(email) != null;
 	}
 }

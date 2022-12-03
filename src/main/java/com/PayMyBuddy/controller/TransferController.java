@@ -25,17 +25,17 @@ import com.PayMyBuddy.model.User;
 import com.PayMyBuddy.model.dto.ConnectionDTO;
 import com.PayMyBuddy.model.dto.TransactionFormDTO;
 import com.PayMyBuddy.model.dto.TransactionUserDTO;
-import com.PayMyBuddy.service.TransactionServiceImpl;
-import com.PayMyBuddy.service.UserServiceImpl;
+import com.PayMyBuddy.service.TransactionService;
+import com.PayMyBuddy.service.UserService;
 
 @Controller
 public class TransferController {
 	
 	@Autowired
-	private TransactionServiceImpl transactionService;
+	private TransactionService transactionService;
 
 	@Autowired
-	private UserServiceImpl userService;
+	private UserService userService;
 	
 	@GetMapping("/transfer")
 	public String showTransfer(Authentication auth, Model model,
@@ -59,7 +59,7 @@ public class TransferController {
 			result.addError(error);
 		}
 		if (!result.hasErrors()) {
-			transactionService.save(auth.getName(), form);
+			transactionService.saveTransaction(auth.getName(), form);
 		}	
 		
 		view(model, auth, currentPage, field, sortDir,

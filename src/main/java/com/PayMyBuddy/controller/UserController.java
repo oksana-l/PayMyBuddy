@@ -14,17 +14,17 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.PayMyBuddy.model.dto.UserDTO;
 import com.PayMyBuddy.model.exception.UserExistsException;
-import com.PayMyBuddy.service.UserServiceImpl;
+import com.PayMyBuddy.service.UserService;
 
 @Controller
 @RequestMapping("/registration")
 @SessionAttributes("user")
 public class UserController {
 
-	private UserServiceImpl userService;
+	private UserService userService;
 
 	@Autowired
-	public UserController(UserServiceImpl userService) {
+	public UserController(UserService userService) {
 		super();
 		this.userService = userService;
 	}
