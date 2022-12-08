@@ -15,11 +15,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.PayMyBuddy.model.Account;
 import com.PayMyBuddy.model.Transaction;
-import com.PayMyBuddy.model.User;
 import com.PayMyBuddy.model.dto.UserDTO;
-import com.PayMyBuddy.model.exception.UserExistsException;
-import com.PayMyBuddy.model.exception.UserNotFoundException;
+import com.PayMyBuddy.model.exception.AccountExistsException;
+import com.PayMyBuddy.model.exception.AccountNotFoundException;
 import com.PayMyBuddy.repository.UserRepository;
 
 @Service
@@ -34,50 +34,50 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User getUser(Long id) {
+	public Account getAccount(Long id) {
 		return userRepository.findById(id).orElseThrow(() -> 
-			new UserNotFoundException(id));
+			new AccountNotFoundException(id));
 	}
 	
 	@Override
-	public User findUserByUserName(String userName) {
-        User user = userRepository.findByUserName(userName);
-        if (user == null) {
+	public Account findAccountByUserName(String userName) {
+        Account account = userRepository.findByUserName(userName);
+        if (account == null) {
             throw new UsernameNotFoundException("No user found with userName : " + userName);
         }        
-        return user;
+        return account;
     }
 	
 	@Override
-	public User findUserByEmail(String email) {
-        User user = userRepository.findByEmail(email);
-        if (user == null) {
+	public Account findAccountByEmail(String email) {
+        Account account = userRepository.findByEmail(email);
+        if (account == null) {
             throw new UsernameNotFoundException("No user found with email : " + email);
         }        
-        return user;
+        return account;
     }
 	
 	@Override
 	@Transactional
-	public User updateUser(Long id, User user) {
-		User userToUpdate = getUser(id);
-		userToUpdate.setUserName(user.getUserName());
-		userToUpdate.setEmail(user.getEmail());
-		userToUpdate.setPassword(user.getPassword());
-		userToUpdate.setBalance(user.getBalance());
-		userToUpdate.setConnections(user.getConnections());
-		userToUpdate.setDebits(user.getDebits());
-		userToUpdate.setCredits(user.getCredits());
-		return userToUpdate;
+	public Account updateAccount(Long id, Account account) {
+		Account accountToUpdate = getAccount(id);
+		accountToUpdate.setUserName(account.getUserName());
+		accountToUpdate.setEmail(account.getEmail());
+		accountToUpdate.setPassword(account.getPassword());
+		accountToUpdate.setBalance(account.getBalance());
+		accountToUpdate.setConnections(account.getConnections());
+		accountToUpdate.setDebits(account.getDebits());
+		accountToUpdate.setCredits(account.getCredits());
+		return accountToUpdate;
 	}
 	
 	@Override
-	public User save(UserDTO userDto) throws UserExistsException {
-		User user = new User(userDto.getUserName(), userDto.getEmail(),
+	public Account save(UserDTO userDto) throws AccountExistsException {
+		Account account = new Account(userDto.getUserName(), userDto.getEmail(),
 				(userDto.getPassword()), new BigDecimal(0.00), new LinkedHashSet<>(), 
 				Arrays.asList(), Arrays.asList());
 		
-		return userRepository.save(user);
+		return userRepository.save(account);
 	}
 	
 	@Override
@@ -88,8 +88,8 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email);
-        if (user == null) {
+        Account account = userRepository.findByEmail(email);
+        if (account == null) {
             throw new UsernameNotFoundException("No user found with email: " + email);
         }
         boolean enabled = true;
@@ -98,14 +98,14 @@ public class UserServiceImpl implements UserService {
         boolean accountNonLocked = true;
         
         return new org.springframework.security.core.userdetails.User(
-          user.getEmail(), user.getPassword(), enabled, accountNonExpired,
+          account.getEmail(), account.getPassword(), enabled, accountNonExpired,
           credentialsNonExpired, accountNonLocked, getAuthorities(new ArrayList<String>()));
 	}
 
 	@Override
 	public UserDetails loadUserByEmail(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email);
-        if (user == null) {
+        Account account = userRepository.findByEmail(email);
+        if (account == null) {
             throw new UsernameNotFoundException("No user found");
         }
         boolean enabled = true;
@@ -114,7 +114,7 @@ public class UserServiceImpl implements UserService {
         boolean accountNonLocked = true;
         
         return new org.springframework.security.core.userdetails.User(
-          user.getEmail(), user.getPassword(), enabled, accountNonExpired,
+          account.getEmail(), account.getPassword(), enabled, accountNonExpired,
           credentialsNonExpired, accountNonLocked, getAuthorities(new ArrayList<String>()));
 	}
 	
@@ -128,7 +128,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
 	public void updateSender(Transaction transaction) {
-		User sender = transaction.getSender();
+		Account sender = transaction.getSender();
 		List<Transaction> debits = sender.getDebits();
 		debits.add(transaction);
 		BigDecimal balance = sender.getBalance();
@@ -139,7 +139,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
 	public void updateRecepient(Transaction transaction) {
-		User recepient = transaction.getRecepient();
+		Account recepient = transaction.getRecepient();
 		List<Transaction> credits = recepient.getCredits();
 		credits.add(transaction);
 		recepient.setBalance(recepient.getBalance().add(transaction.getAmount()));
@@ -148,7 +148,7 @@ public class UserServiceImpl implements UserService {
 	
     @Override
 	public boolean userHasAmount(String senderEmail, BigDecimal amount) {
-		User user = userRepository.findByEmail(senderEmail);
-		return user.getBalance().compareTo(amount)>=0;	
+		Account account = userRepository.findByEmail(senderEmail);
+		return account.getBalance().compareTo(amount)>=0;	
 	}
 }

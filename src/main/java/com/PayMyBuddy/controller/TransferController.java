@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.PayMyBuddy.model.Transaction;
-import com.PayMyBuddy.model.User;
+import com.PayMyBuddy.model.Account;
 import com.PayMyBuddy.model.dto.ConnectionDTO;
 import com.PayMyBuddy.model.dto.TransactionFormDTO;
 import com.PayMyBuddy.model.dto.TransactionUserDTO;
@@ -71,19 +71,19 @@ public class TransferController {
 	private void view(Model model, Authentication auth, int currentPage, String field,
 			String sortDir, TransactionFormDTO form) {
 		
-		User user = userService.findUserByEmail(auth.getName());
+		Account account = userService.findAccountByEmail(auth.getName());
 
 	    Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name())?
 	            Sort.by(field).ascending(): Sort.by(field).descending();
 	    Pageable pageable = PageRequest.of(currentPage - 1,5, sort);
-		Page<Transaction> page = transactionService.findTransactionWithSorting(pageable, user.getId());
+		Page<Transaction> page = transactionService.findTransactionWithSorting(pageable, account.getId());
 	    int totalPages = page.getTotalPages();
 	    long totalItems = page.getTotalElements();
 	    
 	    List<Transaction> transactions = page.getContent();
 	    
 		model.addAttribute("transaction", form);
-		model.addAttribute("connections", user.getConnections().stream()
+		model.addAttribute("connections", account.getConnections().stream()
 				.map(u -> new ConnectionDTO(u)).collect(Collectors.toList()));
 		model.addAttribute("transactions", transactions.stream()
 				.map(t -> new TransactionUserDTO(t)).collect(Collectors.toList()));

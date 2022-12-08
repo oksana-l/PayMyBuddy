@@ -3,12 +3,12 @@ package com.PayMyBuddy.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.PayMyBuddy.model.User;
+import com.PayMyBuddy.model.Account;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long>{
-	User findByEmail(String email);
+public interface UserRepository extends JpaRepository<Account, Long>{
+	Account findByEmail(String email);
 
-	User findByUserName(String userName);
+	Account findByUserName(String userName);
 	
 }

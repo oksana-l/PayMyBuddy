@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.PayMyBuddy.model.User;
+import com.PayMyBuddy.model.Account;
 import com.PayMyBuddy.model.dto.AddConnectionDTO;
 import com.PayMyBuddy.model.dto.ConnectionDTO;
 import com.PayMyBuddy.service.ConnectionService;
@@ -58,8 +58,8 @@ public class ConnectionController {
 	
 	private void view(Authentication auth, String field, Model model, 
 			AddConnectionDTO addConnectionDTO) {
-		User user = userService.findUserByEmail(auth.getName());
-		model.addAttribute("connections", user.getConnections().stream()
+		Account account = userService.findAccountByEmail(auth.getName());
+		model.addAttribute("connections", account.getConnections().stream()
 				.map(u -> new ConnectionDTO(u)).collect(Collectors.toList()));
 		model.addAttribute("connection", addConnectionDTO);
 		model.addAttribute("field", field);

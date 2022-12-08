@@ -15,7 +15,7 @@ import org.mockito.AdditionalAnswers;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 
-import com.PayMyBuddy.model.User;
+import com.PayMyBuddy.model.Account;
 import com.PayMyBuddy.model.dto.AddConnectionDTO;
 import com.PayMyBuddy.repository.UserRepository;
 import com.PayMyBuddy.service.ConnectionServiceImpl;
@@ -40,13 +40,13 @@ public class ConnectionServiceImplTest {
 	
 		Authentication auth = new UsernamePasswordAuthenticationToken (AUTH_MAIL, null, null);
 		
-		when(userRepository.findByEmail(AUTH_MAIL)).thenReturn(new User("Jhon", AUTH_MAIL, "pass",
+		when(userRepository.findByEmail(AUTH_MAIL)).thenReturn(new Account("Jhon", AUTH_MAIL, "pass",
 				new BigDecimal(0.00), new LinkedHashSet<>(), Arrays.asList(), Arrays.asList()));
-		when(userRepository.findByEmail("peter@moi.meme")).thenReturn(new User("Peter", "peter@moi.meme", "pass",
+		when(userRepository.findByEmail("peter@moi.meme")).thenReturn(new Account("Peter", "peter@moi.meme", "pass",
 				new BigDecimal(0.00), new LinkedHashSet<>(), Arrays.asList(), Arrays.asList()));
 		when(userRepository.save(any())).then(AdditionalAnswers.returnsFirstArg());
 		
-		User usersaved = connectionService.save(auth, addConnectionDto);
+		Account usersaved = connectionService.save(auth, addConnectionDto);
 		
 		Assertions.assertFalse(usersaved.getConnections().isEmpty());
 		Assertions.assertEquals(usersaved.getUserName(), "Jhon");
@@ -57,7 +57,7 @@ public class ConnectionServiceImplTest {
 	@Test
 	public void shouldIfUserExisteTest() {
 
-		when(userRepository.findByEmail(AUTH_MAIL)).thenReturn(new User());
+		when(userRepository.findByEmail(AUTH_MAIL)).thenReturn(new Account());
 		
 		Assertions.assertTrue(connectionService.isUserExist(AUTH_MAIL));
 	}

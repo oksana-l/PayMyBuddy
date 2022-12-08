@@ -3,7 +3,6 @@ package com.PayMyBuddy.model;
 import java.math.BigDecimal;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,13 +18,13 @@ public class Transaction {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)	
 	private Long id;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "sender_id")
-	private User sender;
+	private Account sender;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "recepient_id")
-	private User recepient;
+	private Account recepient;
 	
 	private String date;
 	private String description;
@@ -35,7 +34,7 @@ public class Transaction {
 		
 	}
 
-	public Transaction(User sender, User recepient, String date, 
+	public Transaction(Account sender, Account recepient, String date, 
 			String description, BigDecimal amount) {
 		super();
 		this.sender = sender;
@@ -61,19 +60,19 @@ public class Transaction {
 		this.id = id;
 	}
 
-	public User getSender() {
+	public Account getSender() {
 		return sender;
 	}
 
-	public void setSender(User sender) {
+	public void setSender(Account sender) {
 		this.sender = sender;
 	}
 
-	public User getRecepient() {
+	public Account getRecepient() {
 		return recepient;
 	}
 
-	public void setRecepient(User recepient) {
+	public void setRecepient(Account recepient) {
 		this.recepient = recepient;
 	}
 

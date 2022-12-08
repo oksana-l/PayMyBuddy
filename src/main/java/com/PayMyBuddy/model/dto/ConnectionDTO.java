@@ -1,6 +1,6 @@
 package com.PayMyBuddy.model.dto;
 
-import com.PayMyBuddy.model.User;
+import com.PayMyBuddy.model.Account;
 
 public class ConnectionDTO {
 
@@ -11,9 +11,9 @@ public class ConnectionDTO {
 		
 	}
 	
-	public ConnectionDTO(User user) {
-		this.userName = user.getUserName();
-		this.email = user.getEmail();
+	public ConnectionDTO(Account account) {
+		this.userName = account.getUserName();
+		this.email = account.getEmail();
 	}
 	
 	public String getUserName() {

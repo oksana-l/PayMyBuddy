@@ -10,8 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.PayMyBuddy.model.Account;
 import com.PayMyBuddy.model.Transaction;
-import com.PayMyBuddy.model.User;
 import com.PayMyBuddy.model.dto.TransactionFormDTO;
 import com.PayMyBuddy.model.exception.TransactionNotFoundException;
 import com.PayMyBuddy.repository.TransactionRepository;
@@ -43,8 +43,8 @@ public class TransactionServiceImpl implements TransactionService{
 	@Transactional
 	public Transaction saveTransaction(String senderEmail, TransactionFormDTO form) {
 		
-		User sender = userRepository.findByEmail(senderEmail);
-		User recepient = userRepository.findByUserName(form.getRecepientUserName());
+		Account sender = userRepository.findByEmail(senderEmail);
+		Account recepient = userRepository.findByUserName(form.getRecepientUserName());
 		Transaction transaction = new Transaction();
 		Transaction saved = new Transaction();
 		transaction.setSender(sender);

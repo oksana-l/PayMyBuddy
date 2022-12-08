@@ -3,7 +3,7 @@ package com.PayMyBuddy.service;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import com.PayMyBuddy.model.User;
+import com.PayMyBuddy.model.Account;
 import com.PayMyBuddy.model.dto.AddConnectionDTO;
 import com.PayMyBuddy.repository.UserRepository;
 
@@ -18,13 +18,13 @@ public class ConnectionServiceImpl implements ConnectionService{
 	}
 
 	@Override
-	public User save(Authentication auth, AddConnectionDTO addConnectionDto) {
+	public Account save(Authentication auth, AddConnectionDTO addConnectionDto) {
 		
-		User user = userRepository.findByEmail(auth.getName());
-		User connectedUser = userRepository.findByEmail(addConnectionDto.getEmail());
-		user.getConnections().add(connectedUser);
+		Account account = userRepository.findByEmail(auth.getName());
+		Account connectedAccount = userRepository.findByEmail(addConnectionDto.getEmail());
+		account.getConnections().add(connectedAccount);
 		
-		return userRepository.save(user);
+		return userRepository.save(account);
 	}
 	
 	@Override

@@ -18,10 +18,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import com.PayMyBuddy.model.Account;
 import com.PayMyBuddy.model.Transaction;
-import com.PayMyBuddy.model.User;
 import com.PayMyBuddy.model.dto.UserDTO;
-import com.PayMyBuddy.model.exception.UserExistsException;
+import com.PayMyBuddy.model.exception.AccountExistsException;
 import com.PayMyBuddy.repository.UserRepository;
 import com.PayMyBuddy.service.UserService;
 import com.PayMyBuddy.service.UserServiceImpl;
@@ -30,8 +30,8 @@ public class UserServiceImplTest {
 
 	private UserRepository userRepository;
 	private UserService userService;
-	private Optional<User> user;
-	private User connectedUser;
+	private Optional<Account> account;
+	private Account connectedAccount;
 	private Transaction transaction;
 	private List<Transaction> credits  = new ArrayList<Transaction>();
 	private List<Transaction> debits = new ArrayList<Transaction>();
@@ -40,99 +40,99 @@ public class UserServiceImplTest {
 	public void setUp() {
 		userRepository = mock(UserRepository.class);
 		userService = new UserServiceImpl(userRepository);
-		user = Optional.of(new User("Jhon", "jhon@moi.meme", "pass", new BigDecimal(0.00), 
+		account = Optional.of(new Account("Jhon", "jhon@moi.meme", "pass", new BigDecimal(0.00), 
 				new LinkedHashSet<>(), credits, debits));
-		connectedUser = new User("Peter", "peter@moi.meme", "pass", new BigDecimal(30.00), 
+		connectedAccount = new Account("Peter", "peter@moi.meme", "pass", new BigDecimal(30.00), 
 				new LinkedHashSet<>(), credits, debits);
-		transaction = new Transaction(connectedUser, user.get(), "22/11/2021", "Cadeau",
+		transaction = new Transaction(connectedAccount, account.get(), "22/11/2021", "Cadeau",
 				new BigDecimal(10.00));
 		debits.add(transaction);
 	}
 	
 	@Test
 	public void shouldGetUserTest() {
-		when(userRepository.findById(any())).thenReturn(user);
+		when(userRepository.findById(any())).thenReturn(account);
 		
-		Assertions.assertEquals(userService.getUser((long) 1).getUserName(), user
+		Assertions.assertEquals(userService.getAccount((long) 1).getUserName(), account
 				.get().getUserName());
 	}
 	
 	@Test
 	public void shouldFindUserByUserNameTest() {
-		when(userRepository.findByUserName(any())).thenReturn(user.get());
+		when(userRepository.findByUserName(any())).thenReturn(account.get());
 		
-		Assertions.assertEquals(userService.findUserByUserName("Jhon"), user.get());
+		Assertions.assertEquals(userService.findAccountByUserName("Jhon"), account.get());
 	}
 	
 	@Test
 	public void shouldFindUserByUserNameIfUserIsNull() {
 		when(userRepository.findByUserName(null)).thenThrow(new UsernameNotFoundException(
-				"No user found with userName : " + user.get().getUserName()));
+				"No account found with userName : " + account.get().getUserName()));
 		
 		Assertions.assertThrows(UsernameNotFoundException.class, () -> userService
-				.findUserByUserName(user.get().getUserName()));
+				.findAccountByUserName(account.get().getUserName()));
 	}
 	
 	@Test
 	public void shouldFindUserByEmail() {
-		when(userRepository.findByEmail(any())).thenReturn(user.get());
+		when(userRepository.findByEmail(any())).thenReturn(account.get());
 		
-		Assertions.assertEquals(userService.findUserByEmail("jhon@moi.meme"), user.get());
+		Assertions.assertEquals(userService.findAccountByEmail("jhon@moi.meme"), account.get());
 	}
 	
 	@Test
 	public void shouldFindUserByEmailIfUserIsNull() {
 		when(userRepository.findByEmail(null)).thenThrow(new UsernameNotFoundException(
-				"No user found with email : " + user.get().getEmail()));
+				"No account found with email : " + account.get().getEmail()));
 		
 		Assertions.assertThrows(UsernameNotFoundException.class, () -> userService
-				.findUserByEmail(user.get().getEmail()));
+				.findAccountByEmail(account.get().getEmail()));
 	}
 	
 	@Test
 	public void shouldUpdateUserTest() {
-		when(userRepository.findById(any())).thenReturn(user);
+		when(userRepository.findById(any())).thenReturn(account);
 		
-		User userForUpdate = new User("Peter", "peter@moi.meme", "password", new BigDecimal(30.00), 
+		Account accountForUpdate = new Account("Peter", "peter@moi.meme", "password", new BigDecimal(30.00), 
 				new LinkedHashSet<>(), null, null);
-		userForUpdate.getConnections().add(connectedUser);
-		User updatedUser = userService.updateUser((long) 1, userForUpdate);
+		accountForUpdate.getConnections().add(connectedAccount);
+		Account updatedAccount = userService.updateAccount((long) 1, accountForUpdate);
 		
-		Assertions.assertEquals(updatedUser.getUserName(), userForUpdate.getUserName());
-		Assertions.assertEquals(updatedUser.getEmail(), userForUpdate.getEmail());
-		Assertions.assertEquals(updatedUser.getPassword(), userForUpdate.getPassword());
-		Assertions.assertEquals(updatedUser.getBalance(), userForUpdate.getBalance());
-		Assertions.assertEquals(updatedUser.getConnections(), userForUpdate.getConnections());
-		Assertions.assertEquals(updatedUser.getCredits(), userForUpdate.getCredits());
-		Assertions.assertEquals(updatedUser.getDebits(), userForUpdate.getDebits());
+		Assertions.assertEquals(updatedAccount.getUserName(), accountForUpdate.getUserName());
+		Assertions.assertEquals(updatedAccount.getEmail(), accountForUpdate.getEmail());
+		Assertions.assertEquals(updatedAccount.getPassword(), accountForUpdate.getPassword());
+		Assertions.assertEquals(updatedAccount.getBalance(), accountForUpdate.getBalance());
+		Assertions.assertEquals(updatedAccount.getConnections(), accountForUpdate.getConnections());
+		Assertions.assertEquals(updatedAccount.getCredits(), accountForUpdate.getCredits());
+		Assertions.assertEquals(updatedAccount.getDebits(), accountForUpdate.getDebits());
 	}
 	
 	@Test
-	public void shouldSaveTest() throws UserExistsException {
+	public void shouldSaveTest() throws AccountExistsException {
 		when(userRepository.save(any())).then(AdditionalAnswers.returnsFirstArg());
 		
-		user.get().setCredits(credits);
-		UserDTO userDto = new UserDTO(user.get());
-		User savedUser = userService.save(userDto);
+		account.get().setCredits(credits);
+		UserDTO userDto = new UserDTO(account.get());
+		Account savedAccount = userService.save(userDto);
 		
-		Assertions.assertEquals(savedUser.getUserName(), user.get().getUserName());
-		Assertions.assertEquals(savedUser.getEmail(), user.get().getEmail());
-		Assertions.assertEquals(savedUser.getPassword(), user.get().getPassword());
-		Assertions.assertEquals(savedUser.getBalance(), user.get().getBalance());
-		Assertions.assertEquals(savedUser.getConnections(), user.get().getConnections());
-		Assertions.assertEquals(savedUser.getDebits(), user.get().getDebits());
-		Assertions.assertEquals(savedUser.getCredits(), user.get().getCredits());
+		Assertions.assertEquals(savedAccount.getUserName(), account.get().getUserName());
+		Assertions.assertEquals(savedAccount.getEmail(), account.get().getEmail());
+		Assertions.assertEquals(savedAccount.getPassword(), account.get().getPassword());
+		Assertions.assertEquals(savedAccount.getBalance(), account.get().getBalance());
+		Assertions.assertEquals(savedAccount.getConnections(), account.get().getConnections());
+		Assertions.assertEquals(savedAccount.getDebits(), account.get().getDebits());
+		Assertions.assertEquals(savedAccount.getCredits(), account.get().getCredits());
 	}
 	
 	@Test
 	public void shouldIfUserExistTest() {
 		when(userRepository.findByUserName("Peter")).thenReturn(null);
-		when(userRepository.findByUserName("Jhon")).thenReturn(user.get());
+		when(userRepository.findByUserName("Jhon")).thenReturn(account.get());
 		when(userRepository.findByEmail("peter@moi.meme")).thenReturn(null);
-		when(userRepository.findByEmail("jhon@moi.meme")).thenReturn(user.get());
+		when(userRepository.findByEmail("jhon@moi.meme")).thenReturn(account.get());
 		
-		UserDTO userDto1 = new UserDTO(user.get());
-		UserDTO userDto2 = new UserDTO(connectedUser);
+		UserDTO userDto1 = new UserDTO(account.get());
+		UserDTO userDto2 = new UserDTO(connectedAccount);
 		
 		Assertions.assertTrue(userService.ifUserExist(userDto1));
 		Assertions.assertFalse(userService.ifUserExist(userDto2));
@@ -142,23 +142,23 @@ public class UserServiceImplTest {
 	public void shouldUpdateSenderTest() {
 		userService.updateSender(transaction);
 		
-		verify(userRepository,times(1)).save(connectedUser);
-		Assertions.assertEquals(connectedUser.getBalance(), new BigDecimal(20.00));
+		verify(userRepository,times(1)).save(connectedAccount);
+		Assertions.assertEquals(connectedAccount.getBalance(), new BigDecimal(20.00));
 	}
 	
 	@Test
 	public void shouldUpdateRecepientTest() {
 		userService.updateRecepient(transaction);
 		
-		verify(userRepository,times(1)).save(user.get());
-		Assertions.assertEquals(user.get().getBalance(), new BigDecimal(10.00));
+		verify(userRepository,times(1)).save(account.get());
+		Assertions.assertEquals(account.get().getBalance(), new BigDecimal(10.00));
 		
 	}
 	
 	@Test
 	public void shouldUserHasAmountTest() {
-		when(userRepository.findByEmail(any())).thenReturn(connectedUser);
+		when(userRepository.findByEmail(any())).thenReturn(connectedAccount);
 		
-		Assertions.assertTrue(userService.userHasAmount(connectedUser.getEmail(), new BigDecimal(30.00)));
+		Assertions.assertTrue(userService.userHasAmount(connectedAccount.getEmail(), new BigDecimal(30.00)));
 	}
 }

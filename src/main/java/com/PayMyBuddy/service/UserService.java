@@ -7,19 +7,19 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.PayMyBuddy.model.Transaction;
-import com.PayMyBuddy.model.User;
+import com.PayMyBuddy.model.Account;
 import com.PayMyBuddy.model.dto.UserDTO;
-import com.PayMyBuddy.model.exception.UserExistsException;
+import com.PayMyBuddy.model.exception.AccountExistsException;
 
 public interface UserService extends UserDetailsService{
 
 	UserDetails loadUserByEmail(String email) throws UsernameNotFoundException;
 
-	User findUserByUserName(String userName);
+	Account findAccountByUserName(String userName);
 
-	User findUserByEmail(String email);
+	Account findAccountByEmail(String email);
 
-	User updateUser(Long id, User user);
+	Account updateAccount(Long id, Account account);
 
 	void updateSender(Transaction transaction);
 
@@ -27,9 +27,9 @@ public interface UserService extends UserDetailsService{
 
 	boolean userHasAmount(String senderEmail, BigDecimal amount);
 
-	User save(UserDTO registrationDto) throws UserExistsException;
+	Account save(UserDTO registrationDto) throws AccountExistsException;
 
-	User getUser(Long id);
+	Account getAccount(Long id);
 
 	boolean ifUserExist(UserDTO userDto);
 }

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.PayMyBuddy.model.dto.UserDTO;
-import com.PayMyBuddy.model.exception.UserExistsException;
+import com.PayMyBuddy.model.exception.AccountExistsException;
 import com.PayMyBuddy.service.UserService;
 
 @Controller
@@ -41,7 +41,7 @@ public class UserController {
 	
 	@PostMapping
 	public String registerUserAccount(@ModelAttribute("user") UserDTO userDto,
-			BindingResult result, Model model) throws UserExistsException  {
+			BindingResult result, Model model) throws AccountExistsException  {
 		
 		if (userService.ifUserExist(userDto)) {
 			FieldError error = new FieldError("user", "email", "L'utilisateur existe déjà");

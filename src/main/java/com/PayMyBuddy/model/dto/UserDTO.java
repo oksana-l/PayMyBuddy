@@ -1,6 +1,6 @@
 package com.PayMyBuddy.model.dto;
 
-import com.PayMyBuddy.model.User;
+import com.PayMyBuddy.model.Account;
 
 public class UserDTO {
 	
@@ -14,10 +14,10 @@ public class UserDTO {
 	
 	}
 
-	public UserDTO(User user) {
-		this.userName = user.getUserName();
-		this.email = user.getEmail();
-		this.password = user.getPassword();
+	public UserDTO(Account account) {
+		this.userName = account.getUserName();
+		this.email = account.getEmail();
+		this.password = account.getPassword();
 	}
 
 	public String getUserName() {

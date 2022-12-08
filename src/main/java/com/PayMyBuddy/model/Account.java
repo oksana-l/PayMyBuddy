@@ -22,8 +22,8 @@ import com.PayMyBuddy.model.dto.UserDTO;
 
 
 @Entity
-@Table(name = "user")
-public class User {
+@Table(name = "account")
+public class Account {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)	
@@ -44,11 +44,11 @@ public class User {
 	
 	@ManyToMany
 	@JoinTable(name = "connection",
-	   joinColumns = @JoinColumn(name = "user_id"), 	
+	   joinColumns = @JoinColumn(name = "account_id"), 	
 	   inverseJoinColumns = {
-			   @JoinColumn(name = "connected_user_id")
+			   @JoinColumn(name = "connected_account_id")
 	   })
-	private Set<User> connections;
+	private Set<Account> connections;
 	
 	@OneToMany(mappedBy = "sender")
 	private List<Transaction> debits;
@@ -56,14 +56,14 @@ public class User {
 	@OneToMany(mappedBy = "recepient")
 	private List<Transaction> credits;
 	
-	public User() {
+	public Account() {
 		
 	}
 
-	public User(@NotBlank(message = "Name may not be null") String userName,
+	public Account(@NotBlank(message = "Name may not be null") String userName,
 			@NotBlank(message = "Email may not be null") String email,
 			@NotBlank(message = "Password may not be null") String password, BigDecimal balance,
-			Set<User> connections, List<Transaction> debits, List<Transaction> credits) {
+			Set<Account> connections, List<Transaction> debits, List<Transaction> credits) {
 		super();
 		this.userName = userName;
 		this.email = email;
@@ -110,14 +110,14 @@ public class User {
 		this.balance = balance;
 	}
 
-	public Set<User> getConnections() {
+	public Set<Account> getConnections() {
 		if (connections==null) {
 			connections = new HashSet<>();
 		}
 		return connections;
 	}
 
-	public void setConnections(Set<User> connections) {
+	public void setConnections(Set<Account> connections) {
 		this.connections = connections;
 	}
 
@@ -161,10 +161,10 @@ public class User {
         credits.remove(t);
     }
     
-    public static User from(UserDTO userDto){
-    	User user = new User();
-    	user.setUserName(userDto.getUserName());
-    	user.setEmail(userDto.getEmail());
-        return user;
+    public static Account from(UserDTO userDto){
+    	Account account = new Account();
+    	account.setUserName(userDto.getUserName());
+    	account.setEmail(userDto.getEmail());
+        return account;
     }
  }

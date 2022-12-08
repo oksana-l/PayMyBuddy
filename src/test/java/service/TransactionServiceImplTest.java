@@ -18,8 +18,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.data.domain.Page;
 
+import com.PayMyBuddy.model.Account;
 import com.PayMyBuddy.model.Transaction;
-import com.PayMyBuddy.model.User;
 import com.PayMyBuddy.model.dto.TransactionFormDTO;
 import com.PayMyBuddy.model.exception.TransactionNotFoundException;
 import com.PayMyBuddy.repository.TransactionRepository;
@@ -35,8 +35,8 @@ public class TransactionServiceImplTest {
 	private UserRepository userRepository;
 	private UserService userService;
 	private TransactionService transactionService;
-	private User sender;
-	private User recepient;
+	private Account sender;
+	private Account recepient;
 	private Optional<Transaction> transaction;
 	private List<Transaction> credits  = new ArrayList<Transaction>();
 	private List<Transaction> debits = new ArrayList<Transaction>();
@@ -48,9 +48,9 @@ public class TransactionServiceImplTest {
 		userService = mock(UserServiceImpl.class);
 		transactionService = new TransactionServiceImpl(
 				transactionRepository, userRepository, userService);
-		sender = new User("Jhon", "jhon@moi.meme", "pass", new BigDecimal(0.00), 
+		sender = new Account("Jhon", "jhon@moi.meme", "pass", new BigDecimal(0.00), 
 				new LinkedHashSet<>(), credits, debits);
-		recepient = new User("Peter", "peter@moi.meme", "pass", new BigDecimal(30.00), 
+		recepient = new Account("Peter", "peter@moi.meme", "pass", new BigDecimal(30.00), 
 				new LinkedHashSet<>(), credits, debits);
 		transaction = Optional.of(new Transaction(sender, recepient, "22/11/2021", "Cadeau",
 				new BigDecimal(10.00)));
