@@ -18,7 +18,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
-import com.PayMyBuddy.model.dto.UserDTO;
+import com.PayMyBuddy.model.dto.AccountDTO;
 
 
 @Entity
@@ -161,10 +161,10 @@ public class Account {
         credits.remove(t);
     }
     
-    public static Account from(UserDTO userDto){
+    public static Account from(AccountDTO accountDto){
     	Account account = new Account();
-    	account.setUserName(userDto.getUserName());
-    	account.setEmail(userDto.getEmail());
+    	account.setUserName(accountDto.getUserName());
+    	account.setEmail(accountDto.getEmail());
         return account;
     }
  }

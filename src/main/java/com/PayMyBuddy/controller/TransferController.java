@@ -26,7 +26,7 @@ import com.PayMyBuddy.model.dto.ConnectionDTO;
 import com.PayMyBuddy.model.dto.TransactionFormDTO;
 import com.PayMyBuddy.model.dto.TransactionUserDTO;
 import com.PayMyBuddy.service.TransactionService;
-import com.PayMyBuddy.service.UserService;
+import com.PayMyBuddy.service.AccountService;
 
 @Controller
 public class TransferController {
@@ -35,7 +35,7 @@ public class TransferController {
 	private TransactionService transactionService;
 
 	@Autowired
-	private UserService userService;
+	private AccountService accountService;
 	
 	@GetMapping("/transfer")
 	public String showTransfer(Authentication auth, Model model,
@@ -54,7 +54,7 @@ public class TransferController {
             @RequestParam(value="sortDir", required=false, defaultValue="desc") String sortDir,
             Authentication auth, Model model, BindingResult result) {
 		
-		if (! userService.userHasAmount(auth.getName(), form.getAmount())) {
+		if (! accountService.userHasAmount(auth.getName(), form.getAmount())) {
 			FieldError error = new FieldError("transaction", "amount", "Le solde n'est pas suffisant");
 			result.addError(error);
 		}
@@ -71,7 +71,7 @@ public class TransferController {
 	private void view(Model model, Authentication auth, int currentPage, String field,
 			String sortDir, TransactionFormDTO form) {
 		
-		Account account = userService.findAccountByEmail(auth.getName());
+		Account account = accountService.findAccountByEmail(auth.getName());
 
 	    Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name())?
 	            Sort.by(field).ascending(): Sort.by(field).descending();

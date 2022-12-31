@@ -23,17 +23,17 @@ import com.PayMyBuddy.model.Transaction;
 import com.PayMyBuddy.model.dto.TransactionFormDTO;
 import com.PayMyBuddy.model.exception.TransactionNotFoundException;
 import com.PayMyBuddy.repository.TransactionRepository;
-import com.PayMyBuddy.repository.UserRepository;
+import com.PayMyBuddy.repository.AccountRepository;
 import com.PayMyBuddy.service.TransactionService;
 import com.PayMyBuddy.service.TransactionServiceImpl;
-import com.PayMyBuddy.service.UserService;
-import com.PayMyBuddy.service.UserServiceImpl;
+import com.PayMyBuddy.service.AccountService;
+import com.PayMyBuddy.service.AccountServiceImpl;
 
 public class TransactionServiceImplTest {
 
 	private TransactionRepository transactionRepository;
-	private UserRepository userRepository;
-	private UserService userService;
+	private AccountRepository accountRepository;
+	private AccountService accountService;
 	private TransactionService transactionService;
 	private Account sender;
 	private Account recepient;
@@ -44,10 +44,10 @@ public class TransactionServiceImplTest {
 	@BeforeEach
 	public void setUp() {
 		transactionRepository = mock(TransactionRepository.class);
-		userRepository = mock(UserRepository.class);
-		userService = mock(UserServiceImpl.class);
+		accountRepository = mock(AccountRepository.class);
+		accountService = mock(AccountServiceImpl.class);
 		transactionService = new TransactionServiceImpl(
-				transactionRepository, userRepository, userService);
+				transactionRepository, accountRepository, accountService);
 		sender = new Account("Jhon", "jhon@moi.meme", "pass", new BigDecimal(0.00), 
 				new LinkedHashSet<>(), credits, debits);
 		recepient = new Account("Peter", "peter@moi.meme", "pass", new BigDecimal(30.00), 
@@ -76,15 +76,15 @@ public class TransactionServiceImplTest {
 	
 	@Test
 	public void shouldSaveTransactionTest() {
-		when(userRepository.findByEmail(any())).thenReturn(sender);
-		when(userRepository.findByUserName(any())).thenReturn(recepient);
+		when(accountRepository.findByEmail(any())).thenReturn(sender);
+		when(accountRepository.findByUserName(any())).thenReturn(recepient);
 		when(transactionRepository.save(any())).thenReturn(transaction.get());
 		
 		TransactionFormDTO form = new TransactionFormDTO();
 		Transaction savedTransaction = transactionService.saveTransaction(
 					"jhon@moi.meme", form);
-		verify(userService, times(1)).updateSender(any());
-		verify(userService, times(1)).updateRecepient(any());
+		verify(accountService, times(1)).updateSender(any());
+		verify(accountService, times(1)).updateRecepient(any());
 		Assertions.assertEquals(savedTransaction.getDate(), "22/11/2021");
 		Assertions.assertEquals(savedTransaction.getDescription(), "Cadeau");
 		Assertions.assertEquals(savedTransaction.getAmount(), new BigDecimal(10.00));

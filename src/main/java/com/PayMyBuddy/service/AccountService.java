@@ -8,10 +8,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.PayMyBuddy.model.Transaction;
 import com.PayMyBuddy.model.Account;
-import com.PayMyBuddy.model.dto.UserDTO;
+import com.PayMyBuddy.model.dto.AccountDTO;
 import com.PayMyBuddy.model.exception.AccountExistsException;
 
-public interface UserService extends UserDetailsService{
+public interface AccountService extends UserDetailsService{
 
 	UserDetails loadUserByEmail(String email) throws UsernameNotFoundException;
 
@@ -27,9 +27,9 @@ public interface UserService extends UserDetailsService{
 
 	boolean userHasAmount(String senderEmail, BigDecimal amount);
 
-	Account save(UserDTO registrationDto) throws AccountExistsException;
+	Account save(AccountDTO registrationDto) throws AccountExistsException;
 
 	Account getAccount(Long id);
 
-	boolean ifUserExist(UserDTO userDto);
+	boolean ifUserExist(AccountDTO accountDto);
 }

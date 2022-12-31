@@ -2,7 +2,7 @@ package com.PayMyBuddy.model.dto;
 
 import com.PayMyBuddy.model.Account;
 
-public class UserDTO {
+public class AccountDTO {
 	
 	private String userName;
 	
@@ -10,11 +10,11 @@ public class UserDTO {
 	
 	private String password;
 	
-	public UserDTO() {
+	public AccountDTO() {
 	
 	}
 
-	public UserDTO(Account account) {
+	public AccountDTO(Account account) {
 		this.userName = account.getUserName();
 		this.email = account.getEmail();
 		this.password = account.getPassword();

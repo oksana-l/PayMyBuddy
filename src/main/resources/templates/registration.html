@@ -15,7 +15,7 @@
             <div class="form">
                 <div class="col-md col-md-offset-3">    
                     <h1 class="form-title">PayMyBuddy</h1>  
-                    <form th:action="@{/registration}" method="POST" th:object="${user}">
+                    <form th:action="@{/registration}" method="POST" th:object="${account}">
                         <div class="form-group">
                             <label></label> 
                             <input id="userName" class="form-control" th:field="*{userName}" required

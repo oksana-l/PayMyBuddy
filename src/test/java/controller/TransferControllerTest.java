@@ -22,7 +22,7 @@ import com.PayMyBuddy.controller.TransferController;
 import com.PayMyBuddy.model.Transaction;
 import com.PayMyBuddy.model.Account;
 import com.PayMyBuddy.service.TransactionService;
-import com.PayMyBuddy.service.UserService;
+import com.PayMyBuddy.service.AccountService;
 
 @AutoConfigureMockMvc
 @ContextConfiguration(classes = TransferController.class)
@@ -33,7 +33,7 @@ public class TransferControllerTest {
 	private MockMvc mockMvc;
 	
 	@MockBean
-	private UserService userService;
+	private AccountService accountService;
 	
 	@MockBean
 	private TransactionService transactionService;
@@ -43,7 +43,7 @@ public class TransferControllerTest {
 	public void shouldShowTransferTest() throws Exception {
 		Account account = new Account();
 		Page<Transaction> page = new PageImpl<Transaction>(new ArrayList<Transaction>());
-		when(userService.findAccountByEmail(any())).thenReturn(account);
+		when(accountService.findAccountByEmail(any())).thenReturn(account);
 		when(transactionService.findTransactionWithSorting(any(), any())).thenReturn(page);
         mockMvc.perform(get("/transfer")
         .with(user(TEST_USER_ID)))

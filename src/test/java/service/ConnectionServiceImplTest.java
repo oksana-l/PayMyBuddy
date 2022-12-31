@@ -17,20 +17,20 @@ import org.springframework.security.core.Authentication;
 
 import com.PayMyBuddy.model.Account;
 import com.PayMyBuddy.model.dto.AddConnectionDTO;
-import com.PayMyBuddy.repository.UserRepository;
+import com.PayMyBuddy.repository.AccountRepository;
 import com.PayMyBuddy.service.ConnectionServiceImpl;
 
 public class ConnectionServiceImplTest {
 
 	private ConnectionServiceImpl connectionService;
-	private UserRepository userRepository;
+	private AccountRepository accountRepository;
 	private AddConnectionDTO addConnectionDto;
 	private static final String AUTH_MAIL = "jhon@moi.meme";
 	
 	@BeforeEach
 	public void setUp() {
-		userRepository = mock(UserRepository.class);
-		connectionService = new ConnectionServiceImpl(userRepository);
+		accountRepository = mock(AccountRepository.class);
+		connectionService = new ConnectionServiceImpl(accountRepository);
 		addConnectionDto = new AddConnectionDTO();
 		addConnectionDto.setEmail("peter@moi.meme");
 	}
@@ -40,11 +40,11 @@ public class ConnectionServiceImplTest {
 	
 		Authentication auth = new UsernamePasswordAuthenticationToken (AUTH_MAIL, null, null);
 		
-		when(userRepository.findByEmail(AUTH_MAIL)).thenReturn(new Account("Jhon", AUTH_MAIL, "pass",
+		when(accountRepository.findByEmail(AUTH_MAIL)).thenReturn(new Account("Jhon", AUTH_MAIL, "pass",
 				new BigDecimal(0.00), new LinkedHashSet<>(), Arrays.asList(), Arrays.asList()));
-		when(userRepository.findByEmail("peter@moi.meme")).thenReturn(new Account("Peter", "peter@moi.meme", "pass",
+		when(accountRepository.findByEmail("peter@moi.meme")).thenReturn(new Account("Peter", "peter@moi.meme", "pass",
 				new BigDecimal(0.00), new LinkedHashSet<>(), Arrays.asList(), Arrays.asList()));
-		when(userRepository.save(any())).then(AdditionalAnswers.returnsFirstArg());
+		when(accountRepository.save(any())).then(AdditionalAnswers.returnsFirstArg());
 		
 		Account usersaved = connectionService.save(auth, addConnectionDto);
 		
@@ -57,7 +57,7 @@ public class ConnectionServiceImplTest {
 	@Test
 	public void shouldIfUserExisteTest() {
 
-		when(userRepository.findByEmail(AUTH_MAIL)).thenReturn(new Account());
+		when(accountRepository.findByEmail(AUTH_MAIL)).thenReturn(new Account());
 		
 		Assertions.assertTrue(connectionService.isUserExist(AUTH_MAIL));
 	}

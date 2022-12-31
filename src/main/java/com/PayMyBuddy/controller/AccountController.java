@@ -12,26 +12,26 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-import com.PayMyBuddy.model.dto.UserDTO;
+import com.PayMyBuddy.model.dto.AccountDTO;
 import com.PayMyBuddy.model.exception.AccountExistsException;
-import com.PayMyBuddy.service.UserService;
+import com.PayMyBuddy.service.AccountService;
 
 @Controller
 @RequestMapping("/registration")
-@SessionAttributes("user")
-public class UserController {
+@SessionAttributes("account")
+public class AccountController {
 
-	private UserService userService;
+	private AccountService accountService;
 
 	@Autowired
-	public UserController(UserService userService) {
+	public AccountController(AccountService accountService) {
 		super();
-		this.userService = userService;
+		this.accountService = accountService;
 	}
 
-	@ModelAttribute("user")
-    public UserDTO userDto() {
-        return new UserDTO();
+	@ModelAttribute("account")
+    public AccountDTO accountDto() {
+        return new AccountDTO();
     }
 	
 	@GetMapping
@@ -40,21 +40,21 @@ public class UserController {
 	}
 	
 	@PostMapping
-	public String registerUserAccount(@ModelAttribute("user") UserDTO userDto,
+	public String registerUserAccount(@ModelAttribute("account") AccountDTO accountDto,
 			BindingResult result, Model model) throws AccountExistsException  {
 		
-		if (userService.ifUserExist(userDto)) {
-			FieldError error = new FieldError("user", "email", "L'utilisateur existe déjà");
+		if (accountService.ifUserExist(accountDto)) {
+			FieldError error = new FieldError("account", "email", "L'utilisateur existe déjà");
 			result.addError(error);
 		}
 		if (!result.hasErrors()) {
 			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-			String encodedPassword = passwordEncoder.encode(userDto.getPassword());
-			userDto.setPassword(encodedPassword);
-			userService.save(userDto);
+			String encodedPassword = passwordEncoder.encode(accountDto.getPassword());
+			accountDto.setPassword(encodedPassword);
+			accountService.save(accountDto);
 			return "redirect:/login";
 		}
-		model.addAttribute(userDto);
+		model.addAttribute(accountDto);
 		return "registration";
 	}
 	

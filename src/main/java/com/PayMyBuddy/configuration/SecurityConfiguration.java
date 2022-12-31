@@ -13,7 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.PayMyBuddy.service.UserService;
+import com.PayMyBuddy.service.AccountService;
 
 @Configuration
 @ComponentScan(basePackages = { "com.PayMyBuddy.security" })
@@ -21,7 +21,7 @@ import com.PayMyBuddy.service.UserService;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 	
 	@Autowired
-	private UserService userService;
+	private AccountService accountService;
 	
 	@Bean
 	public PasswordEncoder passwordEncoder() {
@@ -31,7 +31,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 	@Bean
 	public DaoAuthenticationProvider authProvider() {
 	    DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-	    authProvider.setUserDetailsService(userService);
+	    authProvider.setUserDetailsService(accountService);
 	    authProvider.setPasswordEncoder(passwordEncoder());
 	    return authProvider;
 	}

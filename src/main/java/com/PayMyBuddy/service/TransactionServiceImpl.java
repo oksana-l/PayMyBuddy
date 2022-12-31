@@ -14,23 +14,23 @@ import com.PayMyBuddy.model.Account;
 import com.PayMyBuddy.model.Transaction;
 import com.PayMyBuddy.model.dto.TransactionFormDTO;
 import com.PayMyBuddy.model.exception.TransactionNotFoundException;
+import com.PayMyBuddy.repository.AccountRepository;
 import com.PayMyBuddy.repository.TransactionRepository;
-import com.PayMyBuddy.repository.UserRepository;
 
 @Service
 public class TransactionServiceImpl implements TransactionService{
 
 	private TransactionRepository transactionRepository;
-	private UserRepository userRepository;
-	private UserService userService;
+	private AccountRepository accountRepository;
+	private AccountService accountService;
 
 	@Autowired
 	public TransactionServiceImpl(TransactionRepository transactionRepository,
-			UserRepository userRepository, UserService userService) {
+			AccountRepository accountRepository, AccountService accountService) {
 		super();
 		this.transactionRepository = transactionRepository;
-		this.userRepository = userRepository;
-		this.userService = userService;
+		this.accountRepository = accountRepository;
+		this.accountService = accountService;
 	}
 	
 	@Override
@@ -43,8 +43,8 @@ public class TransactionServiceImpl implements TransactionService{
 	@Transactional
 	public Transaction saveTransaction(String senderEmail, TransactionFormDTO form) {
 		
-		Account sender = userRepository.findByEmail(senderEmail);
-		Account recepient = userRepository.findByUserName(form.getRecepientUserName());
+		Account sender = accountRepository.findByEmail(senderEmail);
+		Account recepient = accountRepository.findByUserName(form.getRecepientUserName());
 		Transaction transaction = new Transaction();
 		Transaction saved = new Transaction();
 		transaction.setSender(sender);
@@ -53,8 +53,8 @@ public class TransactionServiceImpl implements TransactionService{
 		transaction.setAmount(form.getAmount());
 		transaction.setRecepient(recepient);
 		saved = transactionRepository.save(transaction);
-	    userService.updateSender(saved);
-	    userService.updateRecepient(saved);
+	    accountService.updateSender(saved);
+	    accountService.updateRecepient(saved);
 
 		return saved;
 	}

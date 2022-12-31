@@ -17,31 +17,31 @@ import org.springframework.stereotype.Service;
 
 import com.PayMyBuddy.model.Account;
 import com.PayMyBuddy.model.Transaction;
-import com.PayMyBuddy.model.dto.UserDTO;
+import com.PayMyBuddy.model.dto.AccountDTO;
 import com.PayMyBuddy.model.exception.AccountExistsException;
 import com.PayMyBuddy.model.exception.AccountNotFoundException;
-import com.PayMyBuddy.repository.UserRepository;
+import com.PayMyBuddy.repository.AccountRepository;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class AccountServiceImpl implements AccountService {
 
-	private UserRepository userRepository;
+	private AccountRepository accountRepository;
 		
 	@Autowired
-	public UserServiceImpl(UserRepository userRepository) {
+	public AccountServiceImpl(AccountRepository accountRepository) {
 		super();
-		this.userRepository = userRepository;
+		this.accountRepository = accountRepository;
 	}
 
 	@Override
 	public Account getAccount(Long id) {
-		return userRepository.findById(id).orElseThrow(() -> 
+		return accountRepository.findById(id).orElseThrow(() -> 
 			new AccountNotFoundException(id));
 	}
 	
 	@Override
 	public Account findAccountByUserName(String userName) {
-        Account account = userRepository.findByUserName(userName);
+        Account account = accountRepository.findByUserName(userName);
         if (account == null) {
             throw new UsernameNotFoundException("No user found with userName : " + userName);
         }        
@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public Account findAccountByEmail(String email) {
-        Account account = userRepository.findByEmail(email);
+        Account account = accountRepository.findByEmail(email);
         if (account == null) {
             throw new UsernameNotFoundException("No user found with email : " + email);
         }        
@@ -72,23 +72,23 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public Account save(UserDTO userDto) throws AccountExistsException {
-		Account account = new Account(userDto.getUserName(), userDto.getEmail(),
-				(userDto.getPassword()), new BigDecimal(0.00), new LinkedHashSet<>(), 
+	public Account save(AccountDTO accountDto) throws AccountExistsException {
+		Account account = new Account(accountDto.getUserName(), accountDto.getEmail(),
+				(accountDto.getPassword()), new BigDecimal(0.00), new LinkedHashSet<>(), 
 				Arrays.asList(), Arrays.asList());
 		
-		return userRepository.save(account);
+		return accountRepository.save(account);
 	}
 	
 	@Override
-	public boolean ifUserExist(UserDTO userDto) {
-		return userRepository.findByUserName(userDto.getUserName()) != null ||
-	    		userRepository.findByEmail(userDto.getEmail()) != null;
+	public boolean ifUserExist(AccountDTO accountDto) {
+		return accountRepository.findByUserName(accountDto.getUserName()) != null ||
+	    		accountRepository.findByEmail(accountDto.getEmail()) != null;
 	}
 	
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Account account = userRepository.findByEmail(email);
+        Account account = accountRepository.findByEmail(email);
         if (account == null) {
             throw new UsernameNotFoundException("No user found with email: " + email);
         }
@@ -104,7 +104,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserDetails loadUserByEmail(String email) throws UsernameNotFoundException {
-        Account account = userRepository.findByEmail(email);
+        Account account = accountRepository.findByEmail(email);
         if (account == null) {
             throw new UsernameNotFoundException("No user found");
         }
@@ -134,7 +134,7 @@ public class UserServiceImpl implements UserService {
 		BigDecimal balance = sender.getBalance();
 		BigDecimal amount = transaction.getAmount();
 		sender.setBalance(balance.subtract(amount));
-		userRepository.save(sender);
+		accountRepository.save(sender);
 	}
 
     @Override
@@ -143,12 +143,12 @@ public class UserServiceImpl implements UserService {
 		List<Transaction> credits = recepient.getCredits();
 		credits.add(transaction);
 		recepient.setBalance(recepient.getBalance().add(transaction.getAmount()));
-		userRepository.save(recepient);
+		accountRepository.save(recepient);
 	}
 	
     @Override
 	public boolean userHasAmount(String senderEmail, BigDecimal amount) {
-		Account account = userRepository.findByEmail(senderEmail);
+		Account account = accountRepository.findByEmail(senderEmail);
 		return account.getBalance().compareTo(amount)>=0;	
 	}
 }

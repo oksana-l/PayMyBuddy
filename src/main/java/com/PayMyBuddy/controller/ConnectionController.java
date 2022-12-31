@@ -17,15 +17,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.PayMyBuddy.model.Account;
 import com.PayMyBuddy.model.dto.AddConnectionDTO;
 import com.PayMyBuddy.model.dto.ConnectionDTO;
+import com.PayMyBuddy.service.AccountService;
 import com.PayMyBuddy.service.ConnectionService;
-import com.PayMyBuddy.service.UserService;
 
 @Controller
 @RequestMapping("/myConnections")
 public class ConnectionController {
 
 	@Autowired
-	private UserService userService;
+	private AccountService accountService;
 	
 	@Autowired
 	private ConnectionService connectionService;
@@ -58,7 +58,7 @@ public class ConnectionController {
 	
 	private void view(Authentication auth, String field, Model model, 
 			AddConnectionDTO addConnectionDTO) {
-		Account account = userService.findAccountByEmail(auth.getName());
+		Account account = accountService.findAccountByEmail(auth.getName());
 		model.addAttribute("connections", account.getConnections().stream()
 				.map(u -> new ConnectionDTO(u)).collect(Collectors.toList()));
 		model.addAttribute("connection", addConnectionDTO);
