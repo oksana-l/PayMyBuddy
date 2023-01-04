@@ -19,10 +19,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.PayMyBuddy.controller.TransferController;
-import com.PayMyBuddy.model.Transaction;
 import com.PayMyBuddy.model.Account;
-import com.PayMyBuddy.service.TransactionService;
+import com.PayMyBuddy.model.Transaction;
 import com.PayMyBuddy.service.AccountService;
+import com.PayMyBuddy.service.TransactionService;
 
 @AutoConfigureMockMvc
 @ContextConfiguration(classes = TransferController.class)
@@ -44,7 +44,7 @@ public class TransferControllerTest {
 		Account account = new Account();
 		Page<Transaction> page = new PageImpl<Transaction>(new ArrayList<Transaction>());
 		when(accountService.findAccountByEmail(any())).thenReturn(account);
-		when(transactionService.findTransactionWithSorting(any(), any())).thenReturn(page);
+		when(transactionService.findTransactionsForPage(any(), any())).thenReturn(page);
         mockMvc.perform(get("/transfer")
         .with(user(TEST_USER_ID)))
         .andExpect(status().isOk());

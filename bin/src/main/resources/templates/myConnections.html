@@ -20,9 +20,12 @@
 			<div class="add_connection">
 				<form class="form-add" action="#" th:action="@{/myConnections}"
 					th:object="${connection}" method="post">
-					<input type="email" th:field="*{email}" id="email" class="email"
-						name="email" placeholder="E-mail" required>
-					<button type="submit" class="btn btn-success">Add</button>
+					<div class="form-add-form">
+						<input type="email" th:field="*{email}" id="email" class="email"
+							name="email" placeholder="E-mail" required>
+						<button type="submit" class="btn btn-success">Add</button>
+					</div>
+					<div class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
 				</form>
 			</div>
 			<div class="transaction">

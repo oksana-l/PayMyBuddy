@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import com.PayMyBuddy.model.Account;
 import com.PayMyBuddy.model.Transaction;
 import com.PayMyBuddy.model.dto.TransactionFormDTO;
-import com.PayMyBuddy.model.exception.TransactionNotFoundException;
 import com.PayMyBuddy.repository.AccountRepository;
 import com.PayMyBuddy.repository.TransactionRepository;
 
@@ -31,12 +30,6 @@ public class TransactionServiceImpl implements TransactionService{
 		this.transactionRepository = transactionRepository;
 		this.accountRepository = accountRepository;
 		this.accountService = accountService;
-	}
-	
-	@Override
-	public Transaction getTransaction(Long id) {
-		return transactionRepository.findById(id).orElseThrow(() -> 
-			new TransactionNotFoundException(id));
 	}
 	
 	@Override
@@ -60,7 +53,7 @@ public class TransactionServiceImpl implements TransactionService{
 	}
 	
 	@Override
-	public Page<Transaction> findTransactionWithSorting(Pageable pageable, Long id) {
+	public Page<Transaction> findTransactionsForPage(Pageable pageable, Long id) {
 	    
 		Page<Transaction> transactions = transactionRepository
 				.findTransactionsBySenderIdOrRecepientId(id, id, pageable);

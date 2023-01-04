@@ -66,13 +66,13 @@
 				 th:if="${totalPages > 1}" >
 				<div class="pagination">
 					<a th:if="${currentPage > 1}" 
-					   th:href="@{/transfer/{pageNumber} (pageNumber = ${pageNumber - 1})}" >&laquo;</a>
+					   th:href="@{/transfer(pageNumber = ${currentPage - 1})}" >&laquo;</a>
 					<span th:unless="${currentPage > 1}">&laquo;</span>
 				</div>
 				<div class="pagination"
 				    th:each="pageNumber : ${#numbers.sequence(1, totalPages)}">
 				    <a th:if="${pageNumber != currentPage && totalPages > 1}" 
-				       th:href="@{/transfer/{pageNumber} (pageNumber = ${pageNumber})}"
+				       th:href="@{/transfer(pageNumber = ${pageNumber})}"
 				       th:text="${pageNumber}"></a>  
 				    <span th:unless="${pageNumber != currentPage}"
 				    	  th:text="${pageNumber}" th:class="active">
@@ -80,7 +80,7 @@
 				</div>
 				<div class="pagination">
 					<a th:if="${currentPage < totalPages}" 
-					   th:href="@{'/transfer/' + ${currentPage + 1}}">&raquo;</a>
+					   th:href="@{/transfer(pageNumber = ${currentPage + 1})}">&raquo;</a>
 					   <span th:unless="${currentPage < totalPages}">&raquo;</span>
 				</div>
 			</div>

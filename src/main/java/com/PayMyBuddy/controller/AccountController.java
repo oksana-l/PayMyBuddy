@@ -21,13 +21,8 @@ import com.PayMyBuddy.service.AccountService;
 @SessionAttributes("account")
 public class AccountController {
 
-	private AccountService accountService;
-
 	@Autowired
-	public AccountController(AccountService accountService) {
-		super();
-		this.accountService = accountService;
-	}
+	private AccountService accountService;
 
 	@ModelAttribute("account")
     public AccountDTO accountDto() {

@@ -20,13 +20,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.PayMyBuddy.model.Transaction;
 import com.PayMyBuddy.model.Account;
+import com.PayMyBuddy.model.Transaction;
 import com.PayMyBuddy.model.dto.ConnectionDTO;
 import com.PayMyBuddy.model.dto.TransactionFormDTO;
 import com.PayMyBuddy.model.dto.TransactionUserDTO;
-import com.PayMyBuddy.service.TransactionService;
 import com.PayMyBuddy.service.AccountService;
+import com.PayMyBuddy.service.TransactionService;
 
 @Controller
 public class TransferController {
@@ -60,12 +60,12 @@ public class TransferController {
 		}
 		if (!result.hasErrors()) {
 			transactionService.saveTransaction(auth.getName(), form);
-		}	
-		
-		view(model, auth, currentPage, field, sortDir,
-				result.hasErrors() ? form : new TransactionFormDTO());
-		
-	    return "transfer";
+			return "redirect:/transfer";
+		}
+		else {
+			view(model, auth, currentPage, field, sortDir, form );
+			return  "transfer" ;
+		}
 	}
 	
 	private void view(Model model, Authentication auth, int currentPage, String field,
@@ -75,8 +75,8 @@ public class TransferController {
 
 	    Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name())?
 	            Sort.by(field).ascending(): Sort.by(field).descending();
-	    Pageable pageable = PageRequest.of(currentPage - 1,5, sort);
-		Page<Transaction> page = transactionService.findTransactionWithSorting(pageable, account.getId());
+	    Pageable pageable = PageRequest.of(currentPage - 1, 5, sort);
+		Page<Transaction> page = transactionService.findTransactionsForPage(pageable, account.getId());
 	    int totalPages = page.getTotalPages();
 	    long totalItems = page.getTotalElements();
 	    

@@ -2,18 +2,14 @@ package com.PayMyBuddy.service;
 
 import java.math.BigDecimal;
 
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import com.PayMyBuddy.model.Transaction;
 import com.PayMyBuddy.model.Account;
+import com.PayMyBuddy.model.Transaction;
 import com.PayMyBuddy.model.dto.AccountDTO;
 import com.PayMyBuddy.model.exception.AccountExistsException;
 
 public interface AccountService extends UserDetailsService{
-
-	UserDetails loadUserByEmail(String email) throws UsernameNotFoundException;
 
 	Account findAccountByUserName(String userName);
 

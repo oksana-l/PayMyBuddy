@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 
 @Controller
 @RequestMapping("/profile")
-@SessionAttributes("user")
+@SessionAttributes("account")
 public class ProfileController {
 
 	   @GetMapping

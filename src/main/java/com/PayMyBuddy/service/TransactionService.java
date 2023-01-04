@@ -8,11 +8,8 @@ import com.PayMyBuddy.model.dto.TransactionFormDTO;
 
 public interface TransactionService {
 
-
-	Transaction getTransaction(Long id);
-
 	Transaction saveTransaction(String senderEmail, TransactionFormDTO form);
 
-	Page<Transaction> findTransactionWithSorting(Pageable pageable, Long id);
+	Page<Transaction> findTransactionsForPage(Pageable pageable, Long id);
 
 }

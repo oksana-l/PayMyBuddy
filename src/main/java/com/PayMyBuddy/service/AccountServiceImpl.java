@@ -101,22 +101,6 @@ public class AccountServiceImpl implements AccountService {
           account.getEmail(), account.getPassword(), enabled, accountNonExpired,
           credentialsNonExpired, accountNonLocked, getAuthorities(new ArrayList<String>()));
 	}
-
-	@Override
-	public UserDetails loadUserByEmail(String email) throws UsernameNotFoundException {
-        Account account = accountRepository.findByEmail(email);
-        if (account == null) {
-            throw new UsernameNotFoundException("No user found");
-        }
-        boolean enabled = true;
-        boolean accountNonExpired = true;
-        boolean credentialsNonExpired = true;
-        boolean accountNonLocked = true;
-        
-        return new org.springframework.security.core.userdetails.User(
-          account.getEmail(), account.getPassword(), enabled, accountNonExpired,
-          credentialsNonExpired, accountNonLocked, getAuthorities(new ArrayList<String>()));
-	}
 	
     private static List<GrantedAuthority> getAuthorities (List<String> roles) {
         List<GrantedAuthority> authorities = new ArrayList<>();

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 
 @Controller
 @RequestMapping("/contact")
-@SessionAttributes("user")
+@SessionAttributes("account")
 public class ContactController {
 
 	   @GetMapping

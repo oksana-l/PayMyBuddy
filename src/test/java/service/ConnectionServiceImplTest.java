@@ -59,12 +59,12 @@ public class ConnectionServiceImplTest {
 
 		when(accountRepository.findByEmail(AUTH_MAIL)).thenReturn(new Account());
 		
-		Assertions.assertTrue(connectionService.isUserExist(AUTH_MAIL));
+		Assertions.assertTrue(connectionService.isAccountExist(AUTH_MAIL));
 	}
 	
 	@Test
 	public void shouldIfUserNotExisteTest() {
 		
-		Assertions.assertFalse(connectionService.isUserExist(AUTH_MAIL));
+		Assertions.assertFalse(connectionService.isAccountExist(AUTH_MAIL));
 	}
 }

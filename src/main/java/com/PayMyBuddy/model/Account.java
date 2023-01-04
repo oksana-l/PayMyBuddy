@@ -30,7 +30,7 @@ public class Account {
 	private Long id;
 	
     @NotBlank(message = "Name may not be null")
-    @Column(unique=true)
+    @Column
 	private String userName;
     
     @NotBlank(message = "Email may not be null")

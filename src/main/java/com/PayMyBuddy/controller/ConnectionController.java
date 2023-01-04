@@ -1,8 +1,13 @@
 package com.PayMyBuddy.controller;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,36 +37,64 @@ public class ConnectionController {
 	
 	@GetMapping
 	public String showFormAddConnection(Authentication auth, Model model,
-			@RequestParam (value="field", required=false, defaultValue="date") String field) {
+			@RequestParam(value="pageNumber", required=false, defaultValue="1") int currentPage,
+			@RequestParam (value="field", required=false, defaultValue="user_name") String field,
+            @RequestParam(value="sortDir", required=false, defaultValue="asc") String sortDir) {
 
-		view(auth, field, model, new AddConnectionDTO());		
+		view(auth, field, model, currentPage, sortDir, new AddConnectionDTO());		
 		return "myConnections";
 	}
 	
 	@PostMapping
 	public String addConnection(@ModelAttribute("connection") AddConnectionDTO addConnectionDto,
-			@RequestParam (value="field", required=false, defaultValue="date") String field,
+			@RequestParam(value="pageNumber", required=false, defaultValue="1") int currentPage,
+			@RequestParam (value="field", required=false, defaultValue="user_name") String field,
+            @RequestParam(value="sortDir", required=false, defaultValue="asc") String sortDir,
 			Authentication auth, Model model, BindingResult result) {
 		
-		if (!connectionService.isUserExist(addConnectionDto.getEmail())) {
+		if (!connectionService.isAccountExist(addConnectionDto.getEmail())) {
 			FieldError error = new FieldError("connection", "email", "Cet utilisateur n'existe pas");
+			result.addError(error);
+		}
+		else if (connectionService.isConnectedAccountExist(addConnectionDto.getEmail(), auth.getName())) {
+			FieldError error = new FieldError("connection", "email", "Cet utilisateur est déjà enregistré");
+			result.addError(error);
+		}
+		else if (addConnectionDto.getEmail().equals(auth.getName())) {
+			FieldError error = new FieldError("connection", "email", "Vous ne pouvez pas ajouter cet utilisateur");
 			result.addError(error);
 		}
 		if (!result.hasErrors()) {
 			connectionService.save(auth, addConnectionDto);
+			return "redirect:/myConnections";
 		}
-
-		view(auth, field, model, result.hasErrors() ? addConnectionDto : new AddConnectionDTO());
-		
-		return "myConnections";
+		else {view(auth, field, model, currentPage, sortDir,
+				 result.hasErrors() ? addConnectionDto : new AddConnectionDTO());
+			return "myConnections";
+		}
 	}
 	
-	private void view(Authentication auth, String field, Model model, 
-			AddConnectionDTO addConnectionDTO) {
+	private void view(Authentication auth, String field, Model model, int currentPage,
+			String sortDir, AddConnectionDTO addConnectionDTO) {
+		
 		Account account = accountService.findAccountByEmail(auth.getName());
-		model.addAttribute("connections", account.getConnections().stream()
+		
+	    Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name())?
+	            Sort.by(field).ascending(): Sort.by(field).descending();
+	    Pageable pageable = PageRequest.of(currentPage - 1, 10, sort);
+		Page<Account> page = connectionService.findConnections(pageable, account.getId());
+	    int totalPages = page.getTotalPages();
+	    long totalItems = page.getTotalElements();
+	    
+	    List<Account> connections = page.getContent();
+	    
+		model.addAttribute("connections", connections.stream()
 				.map(u -> new ConnectionDTO(u)).collect(Collectors.toList()));
 		model.addAttribute("connection", addConnectionDTO);
+		model.addAttribute("currentPage", currentPage);
+		model.addAttribute("totalPages", totalPages);
+		model.addAttribute("totalItems", totalItems);
 		model.addAttribute("field", field);
+	    model.addAttribute("sortDir", sortDir);
 	}
 }

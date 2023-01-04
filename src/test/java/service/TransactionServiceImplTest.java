@@ -22,12 +22,12 @@ import com.PayMyBuddy.model.Account;
 import com.PayMyBuddy.model.Transaction;
 import com.PayMyBuddy.model.dto.TransactionFormDTO;
 import com.PayMyBuddy.model.exception.TransactionNotFoundException;
-import com.PayMyBuddy.repository.TransactionRepository;
 import com.PayMyBuddy.repository.AccountRepository;
-import com.PayMyBuddy.service.TransactionService;
-import com.PayMyBuddy.service.TransactionServiceImpl;
+import com.PayMyBuddy.repository.TransactionRepository;
 import com.PayMyBuddy.service.AccountService;
 import com.PayMyBuddy.service.AccountServiceImpl;
+import com.PayMyBuddy.service.TransactionService;
+import com.PayMyBuddy.service.TransactionServiceImpl;
 
 public class TransactionServiceImplTest {
 
@@ -54,12 +54,6 @@ public class TransactionServiceImplTest {
 				new LinkedHashSet<>(), credits, debits);
 		transaction = Optional.of(new Transaction(sender, recepient, "22/11/2021", "Cadeau",
 				new BigDecimal(10.00)));
-	}
-	
-	@Test
-	public void shouldGetTransactionTest() {
-		when(transactionRepository.findById(any())).thenReturn(transaction);
-		Assertions.assertNotNull(transactionService.getTransaction((long) 1));
 	}
 	
 	@Test

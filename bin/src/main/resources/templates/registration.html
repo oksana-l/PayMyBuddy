@@ -15,37 +15,30 @@
             <div class="form">
                 <div class="col-md col-md-offset-3">    
                     <h1 class="form-title">PayMyBuddy</h1>  
-                    <form th:action="@{/registration}" method="POST" th:object="${user}">
+                    <form th:action="@{/registration}" method="POST" th:object="${account}">
                         <div class="form-group">
                             <label></label> 
                             <input id="userName" class="form-control" th:field="*{userName}" required
                                    autofocus="autofocus" placeholder="Your name"/>
-                        <!--    <p th:each="error: ${#fields.errors('email')}" 
-                               th:text="${error}">Validation error</p> -->
+                            <p class="error" th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}"></p> 
                         </div>
                         <div class="form-group">
                             <label></label> 
                             <input id="email" class="form-control" th:field="*{email}" required
                                    autofocus="autofocus" placeholder="@ E-mail"/>
-                        <!--    <p th:each="error: ${#fields.errors('email')}" 
-                               th:text="${error}">Validation error</p> -->
+                            <p class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p> 
                         </div>
     
                         <div class="form-group">
                             <label></label> 
                             <input id="password" class="form-control" type="password" th:field="*{password}"
                                    required autofocus="autofocus" placeholder="* Password"/>
-                        <!-- <p th:each="error : ${#fields.errors('password')}" 
-                               th:text="${error}">Validation error</p> -->
-                        </div>
-                        <div class="form-group">
-                            <input type="checkbox" name="Remember"/> 
-                            <label>Remember me</label><br />
                         </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary">Register</button>
                         </div>
                     </form>
+                    <p class="deja_venu">Déjà venu ? Cliquez <a href="/login">ici</a></p>
                 </div>
             </div>
         </div>

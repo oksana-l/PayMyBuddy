@@ -1,5 +1,9 @@
 package com.PayMyBuddy.service;
 
+import java.util.Set;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -28,8 +32,26 @@ public class ConnectionServiceImpl implements ConnectionService{
 	}
 	
 	@Override
-	public boolean isUserExist(String email) {
+	public Page<Account> findConnections(Pageable pageable, Long id) {
+		
+		return accountRepository.findAccountsByConnectedAccountId(id, pageable);
+	}
+
+	@Override
+	public boolean isAccountExist(String email) {
 		
 		return  accountRepository.findByEmail(email) != null;
+	}
+
+	@Override
+	public boolean isConnectedAccountExist(String connectedEmail, String accountEmail) {
+		Set<Account> connectedAccounts = accountRepository.findByEmail(accountEmail)
+				.getConnections();
+		if (connectedAccounts.isEmpty()) {
+			return false;
+		}
+		else {
+			return connectedAccounts.iterator().next().getEmail() != connectedEmail;
+		}
 	}
 }
