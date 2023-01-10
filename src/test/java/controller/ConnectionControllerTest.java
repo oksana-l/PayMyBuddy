@@ -61,8 +61,7 @@ public class ConnectionControllerTest {
 		
         mockMvc.perform(
         		MockMvcRequestBuilders.get("/myConnections")
-        		.with(user(account.getEmail()))
-        		.content(objectMapper.writeValueAsString(connection)))
+        		.with(user(account.getEmail())))
         		.andExpect(status().isOk());
 	}
 	
@@ -82,7 +81,7 @@ public class ConnectionControllerTest {
         mockMvc.perform(
         		MockMvcRequestBuilders.post("/myConnections")
         		.with(user(account.getEmail()))
-        		.content(objectMapper.writeValueAsString(connection)))
+        		.param("email", "alex@test.com"))
         		.andExpect(status().isOk())
         		.andExpect(model().attribute("connections", listConnectionsDto));
 	}

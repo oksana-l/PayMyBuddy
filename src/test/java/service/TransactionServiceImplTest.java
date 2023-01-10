@@ -17,6 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import com.PayMyBuddy.model.Account;
 import com.PayMyBuddy.model.Transaction;
@@ -84,19 +85,17 @@ public class TransactionServiceImplTest {
 		Assertions.assertEquals(savedTransaction.getAmount(), new BigDecimal(10.00));
 		Assertions.assertEquals(savedTransaction.getSender().getUserName(), "Jhon");
 		Assertions.assertEquals(savedTransaction.getRecepient().getUserName(), "Peter");
-		
-		
 	}
 	
 	@Test
-	public void shouldFindTransactionsWithSortingTest() {
+	public void shouldFindTransactionsForPageTest() {
 		Page<Transaction> transactions = mock(Page.class);
 		when(transactionRepository
 				.findTransactionsBySenderIdOrRecepientId(any(), any(), any()))
 		.thenReturn(transactions);
 		
-		Assertions.assertEquals(transactionRepository
-				.findTransactionsBySenderIdOrRecepientId(null, null, null).getSize(), 0);
+		Assertions.assertEquals(transactionService.findTransactionsForPage(
+				mock(Pageable.class), (long) 1), transactions);
 	}
 	
 }

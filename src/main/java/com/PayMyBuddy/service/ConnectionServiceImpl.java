@@ -51,7 +51,7 @@ public class ConnectionServiceImpl implements ConnectionService{
 			return false;
 		}
 		else {
-			return connectedAccounts.iterator().next().getEmail() != connectedEmail;
+			return connectedAccounts.stream().map(Account::getEmail).anyMatch(connectedEmail::equalsIgnoreCase);
 		}
 	}
 }

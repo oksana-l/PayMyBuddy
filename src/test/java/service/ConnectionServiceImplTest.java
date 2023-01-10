@@ -5,13 +5,20 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 
@@ -55,7 +62,19 @@ public class ConnectionServiceImplTest {
 	}
 	
 	@Test
-	public void shouldIfUserExisteTest() {
+	public void shouldFindConnectionsTest() {
+		Pageable pageable = PageRequest.of(0, 10);
+		List<Account> listAccounts = new ArrayList<Account>();
+		Page<Account> page = new PageImpl<Account>(listAccounts);
+		
+		when(accountRepository.findAccountsByConnectedAccountId(any(), any()))
+				.thenReturn(page);
+		
+		Assertions.assertTrue(connectionService.findConnections(pageable, (long) 1).isEmpty());
+	}
+	
+	@Test
+	public void shouldIfAccountExisteTest() {
 
 		when(accountRepository.findByEmail(AUTH_MAIL)).thenReturn(new Account());
 		
@@ -63,8 +82,28 @@ public class ConnectionServiceImplTest {
 	}
 	
 	@Test
-	public void shouldIfUserNotExisteTest() {
+	public void shouldIfAccountNotExisteTest() {
 		
 		Assertions.assertFalse(connectionService.isAccountExist(AUTH_MAIL));
+	}
+	
+	@Test
+	public void shouldIsConnectedAccountExist() {
+		Set<Account> connections = new LinkedHashSet<>();
+		connections.add(new Account("Peter", "peter@moi.meme", "pass",
+				new BigDecimal(0.00), new LinkedHashSet<>(), Arrays.asList(), Arrays.asList()));
+		when(accountRepository.findByEmail(AUTH_MAIL)).thenReturn(new Account("Jhon", AUTH_MAIL, "pass",
+				new BigDecimal(0.00), connections, Arrays.asList(), Arrays.asList()));
+		
+		Assertions.assertFalse(connectionService.isConnectedAccountExist("peter@moi.meme", AUTH_MAIL));
+	}
+	
+	@Test
+	public void shouldIsConnectedAccountExistIfSetIsEmpty() {
+		
+		when(accountRepository.findByEmail(AUTH_MAIL)).thenReturn(new Account("Jhon", AUTH_MAIL, "pass",
+				new BigDecimal(0.00), new LinkedHashSet<>(), Arrays.asList(), Arrays.asList()));
+		
+		Assertions.assertFalse(connectionService.isConnectedAccountExist(null, AUTH_MAIL));
 	}
 }
