@@ -1,6 +1,5 @@
 package com.PayMyBuddy.configuration;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -18,49 +17,46 @@ import com.PayMyBuddy.service.AccountService;
 @Configuration
 @ComponentScan(basePackages = { "com.PayMyBuddy.security" })
 @EnableWebSecurity
-public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
-	
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+
 	@Autowired
 	private AccountService accountService;
-	
+
 	@Bean
 	public PasswordEncoder passwordEncoder() {
-	    return new BCryptPasswordEncoder();
+		return new BCryptPasswordEncoder();
 	}
 
 	@Bean
 	public DaoAuthenticationProvider authProvider() {
-	    DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-	    authProvider.setUserDetailsService(accountService);
-	    authProvider.setPasswordEncoder(passwordEncoder());
-	    return authProvider;
+		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+		authProvider.setUserDetailsService(accountService);
+		authProvider.setPasswordEncoder(passwordEncoder());
+		return authProvider;
 	}
-	
+
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.authenticationProvider(authProvider());
 	}
-	
+
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable().authorizeRequests()
-			.antMatchers(
-				 "/registration",
-				 "/h2",
-				 "/login",
-	                "/js/**",
-	                "/css/**").permitAll()
-	   		.anyRequest()
-	   		.authenticated()
-	   		.and()
-	   		.formLogin()
-			.loginPage("/login")
-			.defaultSuccessUrl("/home", true)
-	   		.and()
-	   		.logout()
-			.invalidateHttpSession(true)
-			.clearAuthentication(true)
-	   		.logoutSuccessUrl("/login");
+		http.csrf().disable()
+		.authorizeRequests()
+		.antMatchers("/registration", "/h2", "/login", "/js/**", "/css/**")
+				.permitAll()
+				.anyRequest()
+				.authenticated()
+				.and()
+				.formLogin()
+				.loginPage("/login")
+				.defaultSuccessUrl("/home", true)
+				.and()
+				.logout()
+				.invalidateHttpSession(true)
+				.clearAuthentication(true)
+				.logoutSuccessUrl("/login");
 	}
 
 }

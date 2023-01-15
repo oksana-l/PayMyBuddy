@@ -1,7 +1,6 @@
 package com.PayMyBuddy.controller;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -80,13 +79,12 @@ public class TransferController {
 	    int totalPages = page.getTotalPages();
 	    long totalItems = page.getTotalElements();
 	    
-	    List<Transaction> transactions = page.getContent();
+	    List<TransactionUserDTO> transactions = transactionService.getTransactionsUserDTO(page);
+	    List<ConnectionDTO> connections = transactionService.getConnectionsDTO(account);
 	    
 		model.addAttribute("transaction", form);
-		model.addAttribute("connections", account.getConnections().stream()
-				.map(u -> new ConnectionDTO(u)).collect(Collectors.toList()));
-		model.addAttribute("transactions", transactions.stream()
-				.map(t -> new TransactionUserDTO(t)).collect(Collectors.toList()));
+		model.addAttribute("connections", connections);
+		model.addAttribute("transactions", transactions);
 		model.addAttribute("currentPage", currentPage);
 		model.addAttribute("totalPages", totalPages);
 		model.addAttribute("totalItems", totalItems);

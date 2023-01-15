@@ -17,7 +17,7 @@ public class TransactionUserDTO {
 	}
 
 	public TransactionUserDTO(Transaction transaction) {
-		super();
+		
 		this.senderUserName = transaction.getSender().getUserName();
 		this.recepientUserName = transaction.getRecepient().getUserName();
 		this.date = transaction.getDate();

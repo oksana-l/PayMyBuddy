@@ -1,5 +1,6 @@
 package service;
 
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -24,6 +25,7 @@ import org.springframework.security.core.Authentication;
 
 import com.PayMyBuddy.model.Account;
 import com.PayMyBuddy.model.dto.AddConnectionDTO;
+import com.PayMyBuddy.model.dto.ConnectionDTO;
 import com.PayMyBuddy.repository.AccountRepository;
 import com.PayMyBuddy.service.ConnectionServiceImpl;
 
@@ -78,13 +80,13 @@ public class ConnectionServiceImplTest {
 
 		when(accountRepository.findByEmail(AUTH_MAIL)).thenReturn(new Account());
 		
-		Assertions.assertTrue(connectionService.isAccountExist(AUTH_MAIL));
+		Assertions.assertTrue(connectionService.isAccountExists(AUTH_MAIL));
 	}
 	
 	@Test
 	public void shouldIfAccountNotExisteTest() {
 		
-		Assertions.assertFalse(connectionService.isAccountExist(AUTH_MAIL));
+		Assertions.assertFalse(connectionService.isAccountExists(AUTH_MAIL));
 	}
 	
 	@Test
@@ -95,7 +97,7 @@ public class ConnectionServiceImplTest {
 		when(accountRepository.findByEmail(AUTH_MAIL)).thenReturn(new Account("Jhon", AUTH_MAIL, "pass",
 				new BigDecimal(0.00), connections, Arrays.asList(), Arrays.asList()));
 		
-		Assertions.assertFalse(connectionService.isConnectedAccountExist("peter@moi.meme", AUTH_MAIL));
+		Assertions.assertTrue(connectionService.isConnectedAccountExists("peter@moi.meme", AUTH_MAIL));
 	}
 	
 	@Test
@@ -104,6 +106,22 @@ public class ConnectionServiceImplTest {
 		when(accountRepository.findByEmail(AUTH_MAIL)).thenReturn(new Account("Jhon", AUTH_MAIL, "pass",
 				new BigDecimal(0.00), new LinkedHashSet<>(), Arrays.asList(), Arrays.asList()));
 		
-		Assertions.assertFalse(connectionService.isConnectedAccountExist(null, AUTH_MAIL));
+		Assertions.assertFalse(connectionService.isConnectedAccountExists(null, AUTH_MAIL));
+	}
+	
+	@Test
+	public void shouldGetConnectionsDTO() {
+		Account account1 = new Account();
+		Account account2 = new Account();
+		Account account3 = new Account();
+		List<Account> accountsList = Arrays.asList(account1, account2, account3);
+		Page<Account> page = new PageImpl<Account>(accountsList);
+		ConnectionDTO connection1 = new ConnectionDTO(account1);
+		ConnectionDTO connection2 = new ConnectionDTO(account2);
+		ConnectionDTO connection3 = new ConnectionDTO(account3);
+		List<ConnectionDTO> connectionsDtoList = Arrays.asList(connection1, connection2, connection3);
+		List<ConnectionDTO> listConnectionsDTO = connectionService.getConnectionsDTO(page);
+		
+		Assertions.assertEquals(connectionsDtoList, listConnectionsDTO);
 	}
 }

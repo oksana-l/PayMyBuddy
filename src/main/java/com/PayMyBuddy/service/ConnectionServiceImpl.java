@@ -1,6 +1,8 @@
 package com.PayMyBuddy.service;
 
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.PayMyBuddy.model.Account;
 import com.PayMyBuddy.model.dto.AddConnectionDTO;
+import com.PayMyBuddy.model.dto.ConnectionDTO;
 import com.PayMyBuddy.repository.AccountRepository;
 
 @Service
@@ -38,13 +41,13 @@ public class ConnectionServiceImpl implements ConnectionService{
 	}
 
 	@Override
-	public boolean isAccountExist(String email) {
+	public boolean isAccountExists(String email) {
 		
 		return  accountRepository.findByEmail(email) != null;
 	}
 
 	@Override
-	public boolean isConnectedAccountExist(String connectedEmail, String accountEmail) {
+	public boolean isConnectedAccountExists(String connectedEmail, String accountEmail) {
 		Set<Account> connectedAccounts = accountRepository.findByEmail(accountEmail)
 				.getConnections();
 		if (connectedAccounts.isEmpty()) {
@@ -53,5 +56,12 @@ public class ConnectionServiceImpl implements ConnectionService{
 		else {
 			return connectedAccounts.stream().map(Account::getEmail).anyMatch(connectedEmail::equalsIgnoreCase);
 		}
+	}
+
+	@Override
+	public List<ConnectionDTO> getConnectionsDTO(Page<Account> page) {
+		
+		return page.getContent().stream()
+				.map(u -> new ConnectionDTO(u)).collect(Collectors.toList());
 	}
 }

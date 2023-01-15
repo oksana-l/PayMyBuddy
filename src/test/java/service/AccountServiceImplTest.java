@@ -1,6 +1,7 @@
 package service;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -16,12 +17,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.PayMyBuddy.model.Account;
 import com.PayMyBuddy.model.Transaction;
 import com.PayMyBuddy.model.dto.AccountDTO;
-import com.PayMyBuddy.model.exception.AccountExistsException;
+import com.PayMyBuddy.model.exception.AccountNotFoundException;
 import com.PayMyBuddy.repository.AccountRepository;
 import com.PayMyBuddy.service.AccountService;
 import com.PayMyBuddy.service.AccountServiceImpl;
@@ -50,7 +52,7 @@ public class AccountServiceImplTest {
 	}
 	
 	@Test
-	public void shouldGetUserTest() {
+	public void shouldGetAccountTest() {
 		when(accountRepository.findById(any())).thenReturn(account);
 		
 		Assertions.assertEquals(accountService.getAccount((long) 1).getUserName(), account
@@ -58,14 +60,22 @@ public class AccountServiceImplTest {
 	}
 	
 	@Test
-	public void shouldFindUserByUserNameTest() {
+	public void shouldGetAccountIfNotExistTest() {
+		when(accountRepository.findById(any())).thenThrow(new AccountNotFoundException(any()));
+		
+		Assertions.assertThrows(AccountNotFoundException.class, () -> accountService
+				.getAccount((long)1));
+	}
+	
+	@Test
+	public void shouldFindAccountByUserNameTest() {
 		when(accountRepository.findByUserName(any())).thenReturn(account.get());
 		
 		Assertions.assertEquals(accountService.findAccountByUserName("Jhon"), account.get());
 	}
 	
 	@Test
-	public void shouldFindUserByUserNameIfUserIsNull() {
+	public void shouldFindAccountByUserNameIfUserIsNullTest() {
 		when(accountRepository.findByUserName(null)).thenThrow(new UsernameNotFoundException(
 				"No account found with userName : " + account.get().getUserName()));
 		
@@ -74,14 +84,14 @@ public class AccountServiceImplTest {
 	}
 	
 	@Test
-	public void shouldFindUserByEmail() {
+	public void shouldFindUserByEmailTest() {
 		when(accountRepository.findByEmail(any())).thenReturn(account.get());
 		
 		Assertions.assertEquals(accountService.findAccountByEmail("jhon@moi.meme"), account.get());
 	}
 	
 	@Test
-	public void shouldFindUserByEmailIfUserIsNull() {
+	public void shouldFindUserByEmailIfUserIsNullTest() {
 		when(accountRepository.findByEmail(null)).thenThrow(new UsernameNotFoundException(
 				"No account found with email : " + account.get().getEmail()));
 		
@@ -108,7 +118,7 @@ public class AccountServiceImplTest {
 	}
 	
 	@Test
-	public void shouldSaveTest() throws AccountExistsException {
+	public void shouldSaveTest() {
 		when(accountRepository.save(any())).then(AdditionalAnswers.returnsFirstArg());
 		
 		account.get().setCredits(credits);
@@ -159,6 +169,18 @@ public class AccountServiceImplTest {
 	public void shouldUserHasAmountTest() {
 		when(accountRepository.findByEmail(any())).thenReturn(connectedAccount);
 		
-		Assertions.assertTrue(accountService.userHasAmount(connectedAccount.getEmail(), new BigDecimal(30.00)));
+		Assertions.assertTrue(accountService.userHasAmount(
+				connectedAccount.getEmail(), new BigDecimal(30.00)));
 	}
+	
+	@Test
+	public void shouldLoadUserByUsernameTest() {
+		when(accountRepository.findByEmail(anyString())).thenReturn(account.get());
+		
+		UserDetails userTest = accountService.loadUserByUsername("jhon@moi.meme");
+		
+		Assertions.assertNotNull(userTest.getAuthorities());
+		Assertions.assertEquals(account.get().getEmail(), userTest.getUsername());
+	}
+	
 }

@@ -18,8 +18,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
-import com.PayMyBuddy.model.dto.AccountDTO;
-
 
 @Entity
 @Table(name = "account")
@@ -142,29 +140,5 @@ public class Account {
 	public void setCredits(List<Transaction> credits) {
 		this.credits = credits;
 	}
-	
-	public void addDebit(Transaction t) {
-		t.setSender(this);
-		debits.add(t);
-	}
-	
-	public void addCredit(Transaction t) {
-		t.setRecepient(this);
-		credits.add(t);
-	}
-	
-    public void removeDebit(Transaction t){
-        debits.remove(t);
-    }
-	
-    public void removeCredit(Transaction t){
-        credits.remove(t);
-    }
-    
-    public static Account from(AccountDTO accountDto){
-    	Account account = new Account();
-    	account.setUserName(accountDto.getUserName());
-    	account.setEmail(accountDto.getEmail());
-        return account;
-    }
+
  }

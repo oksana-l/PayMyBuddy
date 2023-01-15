@@ -1,7 +1,6 @@
 package com.PayMyBuddy.controller;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -52,11 +51,11 @@ public class ConnectionController {
             @RequestParam(value="sortDir", required=false, defaultValue="asc") String sortDir,
 			Authentication auth, Model model, BindingResult result) {
 		
-		if (!connectionService.isAccountExist(addConnectionDto.getEmail())) {
+		if (!connectionService.isAccountExists(addConnectionDto.getEmail())) {
 			FieldError error = new FieldError("connection", "email", "Cet utilisateur n'existe pas");
 			result.addError(error);
 		}
-		else if (connectionService.isConnectedAccountExist(addConnectionDto.getEmail(), auth.getName())) {
+		else if (connectionService.isConnectedAccountExists(addConnectionDto.getEmail(), auth.getName())) {
 			FieldError error = new FieldError("connection", "email", "Cet utilisateur est déjà enregistré");
 			result.addError(error);
 		}
@@ -68,7 +67,8 @@ public class ConnectionController {
 			connectionService.save(auth, addConnectionDto);
 			return "redirect:/myConnections";
 		}
-		else {view(auth, field, model, currentPage, sortDir,
+		else { 
+			view(auth, field, model, currentPage, sortDir,
 				 result.hasErrors() ? addConnectionDto : new AddConnectionDTO());
 			return "myConnections";
 		}
@@ -86,10 +86,9 @@ public class ConnectionController {
 	    int totalPages = page.getTotalPages();
 	    long totalItems = page.getTotalElements();
 	    
-	    List<Account> connections = page.getContent();
+	    List<ConnectionDTO> connections = connectionService.getConnectionsDTO(page);
 	    
-		model.addAttribute("connections", connections.stream()
-				.map(u -> new ConnectionDTO(u)).collect(Collectors.toList()));
+		model.addAttribute("connections", connections);
 		model.addAttribute("connection", addConnectionDTO);
 		model.addAttribute("currentPage", currentPage);
 		model.addAttribute("totalPages", totalPages);

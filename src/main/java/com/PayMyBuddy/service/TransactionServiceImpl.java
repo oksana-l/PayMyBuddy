@@ -2,6 +2,8 @@ package com.PayMyBuddy.service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -12,7 +14,9 @@ import org.springframework.stereotype.Service;
 
 import com.PayMyBuddy.model.Account;
 import com.PayMyBuddy.model.Transaction;
+import com.PayMyBuddy.model.dto.ConnectionDTO;
 import com.PayMyBuddy.model.dto.TransactionFormDTO;
+import com.PayMyBuddy.model.dto.TransactionUserDTO;
 import com.PayMyBuddy.repository.AccountRepository;
 import com.PayMyBuddy.repository.TransactionRepository;
 
@@ -63,6 +67,20 @@ public class TransactionServiceImpl implements TransactionService{
 			} 
 		});
 		return transactions;
+	}
+
+	@Override
+	public List<ConnectionDTO> getConnectionsDTO(Account account) {
+		
+		return account.getConnections().stream().map(u -> new ConnectionDTO(u))
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public List<TransactionUserDTO> getTransactionsUserDTO(Page<Transaction> page) {
+
+		return page.getContent().stream()
+				.map(t -> new TransactionUserDTO(t)).collect(Collectors.toList());
 	}
 	
 }

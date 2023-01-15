@@ -7,7 +7,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import com.PayMyBuddy.model.Account;
 import com.PayMyBuddy.model.Transaction;
 import com.PayMyBuddy.model.dto.AccountDTO;
-import com.PayMyBuddy.model.exception.AccountExistsException;
 
 public interface AccountService extends UserDetailsService{
 
@@ -23,7 +22,7 @@ public interface AccountService extends UserDetailsService{
 
 	boolean userHasAmount(String senderEmail, BigDecimal amount);
 
-	Account save(AccountDTO registrationDto) throws AccountExistsException;
+	Account save(AccountDTO registrationDto);
 
 	Account getAccount(Long id);
 

@@ -8,9 +8,11 @@ import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 
 import com.PayMyBuddy.model.Account;
 import com.PayMyBuddy.model.Transaction;
+import com.PayMyBuddy.model.dto.ConnectionDTO;
 import com.PayMyBuddy.model.dto.TransactionFormDTO;
 import com.PayMyBuddy.model.exception.TransactionNotFoundException;
 import com.PayMyBuddy.repository.AccountRepository;
@@ -41,6 +44,7 @@ public class TransactionServiceImplTest {
 	private Optional<Transaction> transaction;
 	private List<Transaction> credits  = new ArrayList<Transaction>();
 	private List<Transaction> debits = new ArrayList<Transaction>();
+	private Set<Account> connections = new LinkedHashSet<>();
 	
 	@BeforeEach
 	public void setUp() {
@@ -50,7 +54,7 @@ public class TransactionServiceImplTest {
 		transactionService = new TransactionServiceImpl(
 				transactionRepository, accountRepository, accountService);
 		sender = new Account("Jhon", "jhon@moi.meme", "pass", new BigDecimal(0.00), 
-				new LinkedHashSet<>(), credits, debits);
+				connections, credits, debits);
 		recepient = new Account("Peter", "peter@moi.meme", "pass", new BigDecimal(30.00), 
 				new LinkedHashSet<>(), credits, debits);
 		transaction = Optional.of(new Transaction(sender, recepient, "22/11/2021", "Cadeau",
@@ -98,4 +102,37 @@ public class TransactionServiceImplTest {
 				mock(Pageable.class), (long) 1), transactions);
 	}
 	
+	@Test
+	public void shouldGetConnectionsDTOTest() {		
+		Account account1 = new Account();
+		Account account2 = new Account();
+		Account account3 = new Account();
+		connections.add(account1);
+		connections.add(account2);
+		connections.add(account3);
+		ConnectionDTO connection1 = new ConnectionDTO(account1);
+		ConnectionDTO connection2 = new ConnectionDTO(account2);
+		ConnectionDTO connection3 = new ConnectionDTO(account3);
+		List<ConnectionDTO> connectionsList = transactionService.getConnectionsDTO(sender);
+		List<ConnectionDTO> connectionsDtoList = Arrays.asList(connection1, connection2, connection3);
+		
+		Assertions.assertEquals(connectionsList, connectionsDtoList);
+	}
+	
+//	@Test
+//	public void shouldGetTransactionsUserDTOTest() {
+//		Transaction transaction1 = mock(Transaction.class);
+//		Transaction transaction2 = new Transaction();
+//		Transaction transaction3 = new Transaction();
+//		List<Transaction> transactionsList = Arrays.asList(transaction1, transaction2, transaction3);
+//		Page<Transaction> page = new PageImpl<Transaction>(transactionsList);
+//		TransactionUserDTO transactionUserDTO1 = new TransactionUserDTO(transaction1);
+//		TransactionUserDTO transactionUserDTO2 = new TransactionUserDTO(transaction2);
+//		TransactionUserDTO transactionUserDTO3 = new TransactionUserDTO(transaction3);
+//		List<TransactionUserDTO> transactionsDtoList = Arrays.asList(
+//				transactionUserDTO1, transactionUserDTO2, transactionUserDTO3);
+//		List<TransactionUserDTO> listTransactionsDTO = transactionService.getTransactionsUserDTO(page);
+//		
+//		Assertions.assertEquals(transactionsDtoList, listTransactionsDTO);
+//	}
 }

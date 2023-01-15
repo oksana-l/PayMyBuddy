@@ -8,6 +8,7 @@ class PayMyBuddyApplicationTests {
 
 	@Test
 	void contextLoads() {
+		PayMyBuddyApplication.main(new String[] {});
 	}
 
 }

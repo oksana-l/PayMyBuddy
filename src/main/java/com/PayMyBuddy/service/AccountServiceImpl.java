@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import com.PayMyBuddy.model.Account;
 import com.PayMyBuddy.model.Transaction;
 import com.PayMyBuddy.model.dto.AccountDTO;
-import com.PayMyBuddy.model.exception.AccountExistsException;
 import com.PayMyBuddy.model.exception.AccountNotFoundException;
 import com.PayMyBuddy.repository.AccountRepository;
 
@@ -72,7 +71,7 @@ public class AccountServiceImpl implements AccountService {
 	}
 	
 	@Override
-	public Account save(AccountDTO accountDto) throws AccountExistsException {
+	public Account save(AccountDTO accountDto) {
 		Account account = new Account(accountDto.getUserName(), accountDto.getEmail(),
 				(accountDto.getPassword()), new BigDecimal(0.00), new LinkedHashSet<>(), 
 				Arrays.asList(), Arrays.asList());

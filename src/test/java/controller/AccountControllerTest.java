@@ -4,9 +4,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -18,7 +20,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.PayMyBuddy.configuration.SecurityConfiguration;
 import com.PayMyBuddy.controller.AccountController;
@@ -46,6 +47,7 @@ public class AccountControllerTest {
 		mockMvc.perform(
 				get("/registration"))
         		.andExpect(status().isOk())
+        		.andExpect(view().name("registration"))
         		.andExpect(model().attributeExists("account"));
 	}
 	
@@ -58,7 +60,7 @@ public class AccountControllerTest {
 		when(accountService.ifUserExist(any())).thenReturn(false);
 
 		mockMvc.perform(
-        		MockMvcRequestBuilders.post("/registration")
+				post("/registration")
 				.param("password", "password")
 				.param("userName", "Alex")
 				.param("email", "alex@test.com"))
@@ -81,7 +83,7 @@ public class AccountControllerTest {
 		when(accountService.ifUserExist(any())).thenReturn(true);
 		
 		mockMvc.perform(
-        		MockMvcRequestBuilders.post("/registration", accountDto))
+        		post("/registration", accountDto))
 				.andExpect(status().isOk())
 				.andExpect(model().attributeHasFieldErrors("account", "email"));
 	}

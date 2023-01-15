@@ -18,17 +18,16 @@ import com.PayMyBuddy.controller.ContactController;
 @WebMvcTest
 public class ContactControllerTest {
 
-	
 	@Autowired
 	private MockMvc mockMvc;
-	
+
 	private final static String TEST_USER_ID = "user-id-123";
-	
+
 	@Test
 	public void shouldContactTest() throws Exception {
 		mockMvc.perform(
 				get("/contact")
-		        .with(user(TEST_USER_ID)))
-        		.andExpect(status().isOk());
+				.with(user(TEST_USER_ID)))
+				.andExpect(status().isOk());
 	}
 }
