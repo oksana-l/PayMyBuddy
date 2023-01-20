@@ -62,9 +62,9 @@ public class TransferControllerTest {
 				.with(user(TEST_USER_EMAIL)))
 				.andExpect(status().isOk())
 				.andExpect(view().name("transfer"))
-				.andExpect(model().attributeExists("field"))
-				.andExpect(model().attributeExists("sortDir"))
-				.andExpect(model().attributeExists("currentPage"))
+				.andExpect(model().attribute("field", "date"))
+				.andExpect(model().attribute("sortDir", "desc"))
+				.andExpect(model().attribute("currentPage", 1))
 				.andExpect(model().attribute("totalPages", page.getTotalPages()));
 	}
 	

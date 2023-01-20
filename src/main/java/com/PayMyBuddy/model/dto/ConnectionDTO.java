@@ -35,11 +35,6 @@ public class ConnectionDTO {
 	}
 
 	@Override
-	public int hashCode() {
-		return Objects.hash(email, userName);
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;

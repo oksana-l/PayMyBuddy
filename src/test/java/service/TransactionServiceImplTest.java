@@ -19,12 +19,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import com.PayMyBuddy.model.Account;
 import com.PayMyBuddy.model.Transaction;
 import com.PayMyBuddy.model.dto.ConnectionDTO;
 import com.PayMyBuddy.model.dto.TransactionFormDTO;
+import com.PayMyBuddy.model.dto.TransactionUserDTO;
 import com.PayMyBuddy.model.exception.TransactionNotFoundException;
 import com.PayMyBuddy.repository.AccountRepository;
 import com.PayMyBuddy.repository.TransactionRepository;
@@ -119,20 +121,26 @@ public class TransactionServiceImplTest {
 		Assertions.assertEquals(connectionsList, connectionsDtoList);
 	}
 	
-//	@Test
-//	public void shouldGetTransactionsUserDTOTest() {
-//		Transaction transaction1 = mock(Transaction.class);
-//		Transaction transaction2 = new Transaction();
-//		Transaction transaction3 = new Transaction();
-//		List<Transaction> transactionsList = Arrays.asList(transaction1, transaction2, transaction3);
-//		Page<Transaction> page = new PageImpl<Transaction>(transactionsList);
-//		TransactionUserDTO transactionUserDTO1 = new TransactionUserDTO(transaction1);
-//		TransactionUserDTO transactionUserDTO2 = new TransactionUserDTO(transaction2);
-//		TransactionUserDTO transactionUserDTO3 = new TransactionUserDTO(transaction3);
-//		List<TransactionUserDTO> transactionsDtoList = Arrays.asList(
-//				transactionUserDTO1, transactionUserDTO2, transactionUserDTO3);
-//		List<TransactionUserDTO> listTransactionsDTO = transactionService.getTransactionsUserDTO(page);
-//		
-//		Assertions.assertEquals(transactionsDtoList, listTransactionsDTO);
-//	}
+	@Test
+	public void shouldGetTransactionsUserDTOTest() {
+		Transaction transaction1 = new Transaction();
+		transaction1.setSender(sender);
+		transaction1.setRecepient(recepient);
+		Transaction transaction2 = new Transaction();
+		transaction2.setSender(sender);
+		transaction2.setRecepient(recepient);
+		Transaction transaction3 = new Transaction();
+		transaction3.setSender(sender);
+		transaction3.setRecepient(recepient);
+		List<Transaction> transactionsList = Arrays.asList(transaction1, transaction2, transaction3);
+		Page<Transaction> page = new PageImpl<Transaction>(transactionsList);
+		TransactionUserDTO transactionUserDTO1 = new TransactionUserDTO(transaction1);
+		TransactionUserDTO transactionUserDTO2 = new TransactionUserDTO(transaction2);
+		TransactionUserDTO transactionUserDTO3 = new TransactionUserDTO(transaction3);
+		List<TransactionUserDTO> transactionsDtoList = Arrays.asList(
+				transactionUserDTO1, transactionUserDTO2, transactionUserDTO3);
+		List<TransactionUserDTO> listTransactionsDTO = transactionService.getTransactionsUserDTO(page);
+		
+		Assertions.assertEquals(transactionsDtoList, listTransactionsDTO);
+	}
 }
