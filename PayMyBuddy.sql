@@ -1,5 +1,6 @@
-CREATE TABLE `User` (
+CREATE TABLE `Account` (
   `id` int PRIMARY KEY,
+  `user_name` varchar(50)
   `email` varchar(50),
   `password` varchar(50),
   `balance` float
@@ -15,15 +16,15 @@ CREATE TABLE `Transaction` (
 );
 
 CREATE TABLE `Connection` (
-  `user_id` int,
-  `connected_user_id` int,
-  PRIMARY KEY (`user_id`, `connected_user_id`)
+  `account_id` int,
+  `connected_account_id` int,
+  PRIMARY KEY (`account_id`, `connected_account_id`)
 );
 
-ALTER TABLE `Transaction` ADD FOREIGN KEY (`sender_id`) REFERENCES `User` (`id`);
+ALTER TABLE `Transaction` ADD FOREIGN KEY (`sender_id`) REFERENCES `Account` (`id`);
 
-ALTER TABLE `Transaction` ADD FOREIGN KEY (`recipient_id`) REFERENCES `User` (`id`);
+ALTER TABLE `Transaction` ADD FOREIGN KEY (`recipient_id`) REFERENCES `Account` (`id`);
 
-ALTER TABLE `Connection` ADD FOREIGN KEY (`user_id`) REFERENCES `User` (`id`);
+ALTER TABLE `Connection` ADD FOREIGN KEY (`account_id`) REFERENCES `Account` (`id`);
 
-ALTER TABLE `Connection` ADD FOREIGN KEY (`connected_user_id`) REFERENCES `User` (`id`);
+ALTER TABLE `Connection` ADD FOREIGN KEY (`connected_account_id`) REFERENCES `Account` (`id`);
