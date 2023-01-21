@@ -13,6 +13,8 @@ Le diagramme a été crée à l'aide du site https://www.diagrams.net . Le fichi
 ### Modèle physique de données qui decrit la structure des tables de la base de données :
 
 
-![image](https://user-images.githubusercontent.com/72916163/213879211-67c66a12-3232-418d-81e8-72000f3df567.png).  
+ ![image](https://user-images.githubusercontent.com/72916163/213883498-97bf9e87-b7c8-4145-93c8-54cba896edc0.png)
+ 
+  
 
 À partir de ce lien https://dbdiagram.io/d/633555cd7b3d2034ffe5347c , il est possible de générer un fichier SQL de création des tables.
